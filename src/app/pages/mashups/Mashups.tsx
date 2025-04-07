@@ -9,10 +9,6 @@ export async function Mashups() {
 
   return (
     <div className="px-4 py-8">
-      <h1 className="text-3xl font-bold text-neutral-800 mb-8 text-center">
-        AI Movie Mashups
-      </h1>
-
       {mashups.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-600 text-lg">
