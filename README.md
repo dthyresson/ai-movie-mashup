@@ -1,12 +1,40 @@
 # AI Movie Mashup
 
+> Griffin: So it’s a psychic, political, thriller comedy with a heart.
+
+> Writer: With a heart, not unlike Ghost meets Manchurian Candidate.
+
+**From ["The Player"](<https://en.wikipedia.org/wiki/The_Player_(1992*film)s>) - a 1992 American satirical black comedy mystery film directed by Robert Altman and written by Michael Tolkin.\***
+
+---
+
 AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka "mashes up") from two different movies to create unique, AI-generated movie concepts. It uses artificial intelligence to generate new movie ideas, complete with titles, taglines, plots, posters, and audio of the plot.
+
+## Screenshots
+
+![Mashups](./docs/mashups.png)
+![New Mashup](./docs/new.png)
+![Queued](./docs/queued.png)
+![E.T. and Footloose](./docs/et-footloose.png)
+![Forever and Pink](./docs/forever-pink.png)
 
 ## Video Demo
 
 I recorded a video demo of the app that shows the main features in action.
 
 [👀 Watch the Demo](https://screen.studio/share/JRN2137W)
+
+## Important !!!
+
+This app is not deployed. It's a work in progress.
+
+You should run locally with `pnpm dev` and check it out.
+
+I would not deploy until I can ensure rate limiting is in place to prevent abuse and runaway AI charges.
+
+The `api` is open currently and thus accessible to all and open to potential high AI costs.
+
+If you choose to deploy, your do so knowing that you are responsible for the cost of the AI usage.
 
 ## Features
 
@@ -17,7 +45,7 @@ I recorded a video demo of the app that shows the main features in action.
   - Detailed plot summaries
   - Custom movie posters
   - Audio text to speech of the mashup plot
-- **User Management**: Secure authentication and user profiles
+- **User Management**: Secure authentication and user profiles. Not yet implemented.
 - **Mashup Gallery**: Browse and explore previously created mashups
 - **Asynchronous Processing**: Asynchronous processing of mashup requests with Cloudflare Queues
 
@@ -189,4 +217,4 @@ pnpm release
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is not licensed.

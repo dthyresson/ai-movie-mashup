@@ -1,5 +1,6 @@
 import { TurnstileScript } from "@redwoodjs/sdk/turnstile";
 import { link } from "@/app/shared/links";
+
 export const Document: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => (

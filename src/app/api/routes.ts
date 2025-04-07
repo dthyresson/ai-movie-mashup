@@ -79,7 +79,10 @@ export const apiRoutes = [
     }
 
     return new Response(image.body, {
-      headers: { "Content-Type": "image/jpeg" },
+      headers: {
+        "Content-Type": "image/jpeg",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     });
   }),
   route("/mashups/:id/audio", async ({ params, env }) => {
@@ -111,7 +114,10 @@ export const apiRoutes = [
     }
 
     return new Response(audio.body, {
-      headers: { "Content-Type": "audio/mp3" },
+      headers: {
+        "Content-Type": "audio/mp3",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     });
   }),
 ];
