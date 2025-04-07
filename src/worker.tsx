@@ -75,8 +75,8 @@ export default {
   async queue(batch, env) {
     for (const message of batch.messages) {
       console.log("handling message" + JSON.stringify(message));
-      const { mashupId, firstMovieId, secondMovieId } = message.body as {
-        mashupId: string;
+      const { id, firstMovieId, secondMovieId } = message.body as {
+        id: string;
         firstMovieId: string;
         secondMovieId: string;
       };
@@ -84,6 +84,7 @@ export default {
       try {
         // Process the mashup
         const mashup = await mashupMovies({
+          id,
           firstMovieId,
           secondMovieId,
           env,
@@ -93,7 +94,7 @@ export default {
 
         // Update the existing mashup record
         await db.mashup.update({
-          where: { id: mashupId },
+          where: { id },
           data: {
             status: "COMPLETED",
             title: mashup.title,
@@ -107,7 +108,7 @@ export default {
       } catch (error) {
         // Update the mashup with error status
         await db.mashup.update({
-          where: { id: mashupId },
+          where: { id },
           data: {
             status: "FAILED",
           },

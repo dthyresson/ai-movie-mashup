@@ -146,10 +146,12 @@ async function generateAudio(
 }
 
 export async function mashupMovies({
+  id,
   firstMovieId,
   secondMovieId,
   env,
 }: {
+  id: string;
   firstMovieId: string;
   secondMovieId: string;
   env: Env;
@@ -185,7 +187,8 @@ export async function mashupMovies({
   console.debug({ title, tagline, plot }, "The AI response");
 
   // Save the mashup to the database
-  const mashup = await db.mashup.create({
+  const mashup = await db.mashup.update({
+    where: { id: id },
     data: {
       title,
       tagline,
