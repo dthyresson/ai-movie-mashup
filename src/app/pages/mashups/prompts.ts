@@ -1,5 +1,6 @@
 import type { Movie } from "@prisma/client";
 
+// Get a mashup prompt used to generate a new mashup title, tagline, and plot summary
 export const getMashupPrompt = (movie1: Movie, movie2: Movie) => {
   const systemPrompt = `
     You are a movie screenwriter.
@@ -34,6 +35,7 @@ export const getMashupPrompt = (movie1: Movie, movie2: Movie) => {
   return { systemPrompt, userPrompt, assistantPrompt };
 };
 
+// Get a poster prompt used to generate a new poster description
 export const getPosterPrompt = (
   title: string,
   tagline: string,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Movie } from "@prisma/client";
-import { MovieCard } from "./MovieCard";
+import { MovieCard } from "@/app/pages/movies/MovieCard";
 import Spinner from "@/app/components/ui/Spinner";
 interface MashupDetailProps {
   id: string;

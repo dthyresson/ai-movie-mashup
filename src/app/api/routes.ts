@@ -3,6 +3,8 @@ import { mashupMovies } from "@/app/pages/mashups/functions";
 import { db } from "@/db";
 
 export const apiRoutes = [
+  // Create a new mashup, but in a pending state before the job is queued
+  // The queue job will update the mashup with the final details. See the worker.
   route("/mashup/:firstMovieId/:secondMovieId", async ({ params, env }) => {
     const firstMovieId = params.firstMovieId;
     const secondMovieId = params.secondMovieId;
@@ -37,6 +39,7 @@ export const apiRoutes = [
       },
     });
   }),
+  // Get a mashup by id and return the mashup details in JSON format
   route("/mashups/:id", async ({ params, env }) => {
     const id = params.id;
     const mashup = await db.mashup.findUnique({
@@ -56,6 +59,7 @@ export const apiRoutes = [
       },
     });
   }),
+  // Get the poster for a mashup by id and return the poster image
   route("/mashups/:id/poster", async ({ params, env }) => {
     const id = params.id;
     const mashup = await db.mashup.findUnique({
@@ -85,6 +89,7 @@ export const apiRoutes = [
       },
     });
   }),
+  // Get the audio for a mashup by id and return the audio file
   route("/mashups/:id/audio", async ({ params, env }) => {
     const id = params.id;
     const mashup = await db.mashup.findUnique({

@@ -18,7 +18,6 @@ export { SessionDurableObject } from "./session/durableObject";
 export type AppContext = {
   session: Session | null;
   user: User | null;
-  env: any;
 };
 
 const app = defineApp<AppContext>([
@@ -72,9 +71,11 @@ const app = defineApp<AppContext>([
 
 export default {
   fetch: app.fetch,
+  // Process the message queue
   async queue(batch, env) {
     for (const message of batch.messages) {
       console.log("handling message" + JSON.stringify(message));
+
       const { channel, id, firstMovieId, secondMovieId } = message.body as {
         channel: string;
         id: string;
@@ -82,6 +83,7 @@ export default {
         secondMovieId: string;
       };
 
+      // Process the new mashup message
       if (channel === "new-mashup") {
         try {
           // Process the mashup
@@ -94,7 +96,7 @@ export default {
 
           console.debug("updating mashup via Queue", mashup);
 
-          // Update the existing mashup record
+          // Update the existing mashup record and mark it as completed
           await db.mashup.update({
             where: { id },
             data: {
@@ -108,7 +110,7 @@ export default {
             },
           });
         } catch (error) {
-          // Update the mashup with error status
+          // Update the mashup and retry
           await db.mashup.update({
             where: { id },
             data: {
