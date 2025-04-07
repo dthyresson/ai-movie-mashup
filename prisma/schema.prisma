@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) // User ID (UUID-based)
+  username  String   @unique
+  createdAt DateTime @default(now())
+
+  credentials Credential[] // Relationship: One user can have many credentials
+}
+
+model Credential {
+  id           String   @id @default(uuid()) // Internal DB ID
+  userId       String   @unique // Each user has one discoverable credential
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  credentialId String   @unique // WebAuthn credential identifier
+  publicKey    Bytes
+  counter      Int      @default(0)
+
+  @@index([credentialId])
+  @@index([userId])
+}
+
+model Movie {
+  id              String    @id
+  createdAt       DateTime  @default(now())
+  title           String
+  photo           String
+  overview        String
+  releaseDate     DateTime?
+  mashupsAsMovie1 Mashup[]  @relation("MovieOne")
+  mashupsAsMovie2 Mashup[]  @relation("MovieTwo")
+}
+
+model Mashup {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  movie1Id         String
+  movie2Id         String
+  movie1           Movie    @relation("MovieOne", fields: [movie1Id], references: [id])
+  movie2           Movie    @relation("MovieTwo", fields: [movie2Id], references: [id])
+  title            String
+  tagline          String
+  plot             String
+  imageKey         String
+  imageDescription String
+  audioKey         String?
+}
