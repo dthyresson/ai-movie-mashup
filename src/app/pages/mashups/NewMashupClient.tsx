@@ -104,7 +104,7 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
       {/* Scrollable Movie Grid */}
       {!isMashingUp && (
         <div className="h-[calc(100vh-300px)] overflow-y-auto">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 pb-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 p-4">
             {movies?.map((movie) => (
               <li
                 key={movie.id}

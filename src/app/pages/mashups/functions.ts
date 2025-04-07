@@ -91,7 +91,7 @@ async function generatePosterPrompt(
   return imagePromptResult.response;
 }
 
-// Function to generate the image
+// Function to generate the poster image
 async function generatePosterImage(prompt: string, env: Env) {
   const response = await env.AI.run(IMAGE_GENERATION_MODEL, {
     prompt: prompt,
