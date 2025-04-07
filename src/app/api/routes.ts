@@ -12,7 +12,7 @@ export const apiRoutes = [
       data: {
         movie1Id: firstMovieId,
         movie2Id: secondMovieId,
-        status: "PENDING", // You'll need to add this field to your schema
+        status: "PENDING",
         title: "Processing...",
         tagline: "Processing...",
         plot: "Processing...",
