@@ -75,44 +75,49 @@ export default {
   async queue(batch, env) {
     for (const message of batch.messages) {
       console.log("handling message" + JSON.stringify(message));
-      const { id, firstMovieId, secondMovieId } = message.body as {
+      const { channel, id, firstMovieId, secondMovieId } = message.body as {
+        channel: string;
         id: string;
         firstMovieId: string;
         secondMovieId: string;
       };
 
-      try {
-        // Process the mashup
-        const mashup = await mashupMovies({
-          id,
-          firstMovieId,
-          secondMovieId,
-          env,
-        });
+      if (channel === "new-mashup") {
+        try {
+          // Process the mashup
+          const mashup = await mashupMovies({
+            id,
+            firstMovieId,
+            secondMovieId,
+            env,
+          });
 
-        console.debug("updating mashup via Queue", mashup);
+          console.debug("updating mashup via Queue", mashup);
 
-        // Update the existing mashup record
-        await db.mashup.update({
-          where: { id },
-          data: {
-            status: "COMPLETED",
-            title: mashup.title,
-            tagline: mashup.tagline,
-            plot: mashup.plot,
-            imageKey: mashup.imageKey,
-            audioKey: mashup.audioKey,
-            imageDescription: mashup.imageDescription,
-          },
-        });
-      } catch (error) {
-        // Update the mashup with error status
-        await db.mashup.update({
-          where: { id },
-          data: {
-            status: "FAILED",
-          },
-        });
+          // Update the existing mashup record
+          await db.mashup.update({
+            where: { id },
+            data: {
+              status: "COMPLETED",
+              title: mashup.title,
+              tagline: mashup.tagline,
+              plot: mashup.plot,
+              imageKey: mashup.imageKey,
+              audioKey: mashup.audioKey,
+              imageDescription: mashup.imageDescription,
+            },
+          });
+        } catch (error) {
+          // Update the mashup with error status
+          await db.mashup.update({
+            where: { id },
+            data: {
+              status: "PENDING",
+            },
+          });
+
+          message.retry();
+        }
       }
     }
   },

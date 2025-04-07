@@ -23,6 +23,7 @@ export const apiRoutes = [
 
     // Queue the job
     await env.QUEUE.send({
+      channel: "new-mashup",
       id: pendingMashup.id,
       firstMovieId,
       secondMovieId,
