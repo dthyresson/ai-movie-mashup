@@ -43,6 +43,21 @@
       "binding": "R2"
     }
   ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "QUEUE",
+        "queue": "MASHUP_QUEUE"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "MASHUP_QUEUE",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5
+      }
+    ]
+  },
 
   // Environment variables
   "vars": {

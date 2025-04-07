@@ -47,17 +47,24 @@ model Movie {
   mashupsAsMovie2 Mashup[]  @relation("MovieTwo")
 }
 
+enum MashupStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 model Mashup {
-  id               String   @id @default(cuid())
-  createdAt        DateTime @default(now())
+  id               String       @id @default(cuid())
+  createdAt        DateTime     @default(now())
   movie1Id         String
   movie2Id         String
-  movie1           Movie    @relation("MovieOne", fields: [movie1Id], references: [id])
-  movie2           Movie    @relation("MovieTwo", fields: [movie2Id], references: [id])
+  movie1           Movie        @relation("MovieOne", fields: [movie1Id], references: [id])
+  movie2           Movie        @relation("MovieTwo", fields: [movie2Id], references: [id])
   title            String
   tagline          String
   plot             String
   imageKey         String
   imageDescription String
   audioKey         String?
+  status           MashupStatus @default(PENDING)
 }

@@ -6,12 +6,52 @@ export const apiRoutes = [
   route("/mashup/:firstMovieId/:secondMovieId", async ({ params, env }) => {
     const firstMovieId = params.firstMovieId;
     const secondMovieId = params.secondMovieId;
-    const mashup = await mashupMovies({ firstMovieId, secondMovieId, env });
-    return new Response(JSON.stringify(mashup), {
-      status: 302,
+
+    // Create a pending mashup record first
+    const pendingMashup = await db.mashup.create({
+      data: {
+        movie1Id: firstMovieId,
+        movie2Id: secondMovieId,
+        status: "PENDING", // You'll need to add this field to your schema
+        title: "Processing...",
+        tagline: "Processing...",
+        plot: "Processing...",
+        imageKey: "",
+        imageDescription: "",
+      },
+    });
+
+    // Queue the job
+    await env.QUEUE.send({
+      mashupId: pendingMashup.id,
+      firstMovieId,
+      secondMovieId,
+    });
+
+    return new Response(JSON.stringify({ id: pendingMashup.id }), {
+      status: 302, // Accepted
       headers: {
         "Content-Type": "application/json",
-        Location: `/mashups/${mashup.id}`,
+        Location: `/mashups/${pendingMashup.id}`,
+      },
+    });
+  }),
+  route("/mashups/:id", async ({ params, env }) => {
+    const id = params.id;
+    const mashup = await db.mashup.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        movie1: true,
+        movie2: true,
+      },
+    });
+
+    return new Response(JSON.stringify(mashup), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
       },
     });
   }),

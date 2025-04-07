@@ -207,6 +207,11 @@ export async function mashupMovies({
 
 export async function getMashups() {
   const mashups = await db.mashup.findMany({
+    where: {
+      status: {
+        equals: "COMPLETED",
+      },
+    },
     include: {
       movie1: true,
       movie2: true,

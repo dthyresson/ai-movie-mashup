@@ -11,6 +11,7 @@ import { db, setupDb } from "./db";
 import type { User } from "@prisma/client";
 import { apiRoutes } from "./app/api/routes";
 import { mashupRoutes } from "./app/pages/mashups/routes";
+import { mashupMovies } from "./app/pages/mashups/functions";
 
 export { SessionDurableObject } from "./session/durableObject";
 
@@ -20,7 +21,7 @@ export type AppContext = {
   env: any;
 };
 
-export default defineApp<AppContext>([
+const app = defineApp<AppContext>([
   setCommonHeaders(),
   async ({ env, appContext, request, headers }) => {
     await setupDb(env);
@@ -68,3 +69,50 @@ export default defineApp<AppContext>([
     prefix("/api", apiRoutes),
   ]),
 ]);
+
+export default {
+  fetch: app.fetch,
+  async queue(batch, env) {
+    for (const message of batch.messages) {
+      console.log("handling message" + JSON.stringify(message));
+      const { mashupId, firstMovieId, secondMovieId } = message.body as {
+        mashupId: string;
+        firstMovieId: string;
+        secondMovieId: string;
+      };
+
+      try {
+        // Process the mashup
+        const mashup = await mashupMovies({
+          firstMovieId,
+          secondMovieId,
+          env,
+        });
+
+        console.debug("updating mashup via Queue", mashup);
+
+        // Update the existing mashup record
+        await db.mashup.update({
+          where: { id: mashupId },
+          data: {
+            status: "COMPLETED",
+            title: mashup.title,
+            tagline: mashup.tagline,
+            plot: mashup.plot,
+            imageKey: mashup.imageKey,
+            audioKey: mashup.audioKey,
+            imageDescription: mashup.imageDescription,
+          },
+        });
+      } catch (error) {
+        // Update the mashup with error status
+        await db.mashup.update({
+          where: { id: mashupId },
+          data: {
+            status: "FAILED",
+          },
+        });
+      }
+    }
+  },
+} satisfies ExportedHandler<Env>;
