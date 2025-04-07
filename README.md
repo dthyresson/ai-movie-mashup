@@ -1,124 +1,186 @@
-# Standard RedwoodSDK Starter
+# AI Movie Mashup
 
-This "standard starter" is the recommended implementation for RedwoodSDK. You get a Typescript project with:
+AI Movie Mashup is fun a RedwoodSDK experiment that combines elements (aka "mashes up") from two different movies to create unique, AI-generated movie concepts. It uses artificial intelligence to generate new movie ideas, complete with titles, taglines, plots, posters, and audio of the plot.
 
-- Vite
-- database (Prisma via D1)
-- Session Management (via DurableObjects)
-- Passkey authentication (Webauthn)
-- Storage (via R2)
+## Features
 
-## Creating your project
+- **Movie Selection**: Choose two movies to combine into a unique mashup
+- **AI-Generated Content**: Automatically generates:
+  - Creative movie titles
+  - Engaging taglines
+  - Detailed plot summaries
+  - Custom movie posters
+  - Audio text to speech of the mashup plot
+- **User Management**: Secure authentication and user profiles
+- **Mashup Gallery**: Browse and explore previously created mashups
+- **Asynchronous Processing**: Asynchronous processing of mashup requests with Cloudflare Queues
 
-```shell
-npx degit redwoodjs/sdk/starters/standard my-project-name
-cd my-project-name
+## Technology Stack
+
+- **RedwoodSDK**: https://www.rwsdk.com
+  - React with TypeScript, React Server Components, Cloudflare Workers
+- **AI**: Cloudflare AIs
+- **Database**: Cloudflare D1 with Prisma ORM
+- **Queue**: Cloudflare Queues
+- **Image Generation**: Cloudflare R2 and D1
+- **Storage**: Cloudflare R2
+- **Authentication**: WebAuthn for secure user authentication
+- **Styling**: Tailwind CSS
+- **Build Tools**: Vite
+
+## Database Schema and Data Models
+
+### Movies
+
+The `Movie` model represents individual movies in the system:
+
+- `id`: Unique identifier for the movie
+- `createdAt`: Timestamp of when the movie was added
+- `title`: Movie title
+- `photo`: URL/path to movie poster image
+- `overview`: Movie description/synopsis
+- `releaseDate`: Original release date of the movie
+- Relations:
+  - Connected to `Mashup` model as either movie1 or movie2
+
+### Users
+
+The `User` model handles user authentication and management:
+
+- `id`: UUID-based unique identifier
+- `username`: Unique username for the user
+- `createdAt`: Account creation timestamp
+- Relations:
+  - Has associated `Credential` records for WebAuthn authentication
+
+### Credentials
+
+The `Credential` model manages WebAuthn authentication:
+
+- `id`: UUID-based identifier
+- `userId`: Associated user ID
+- `credentialId`: Unique WebAuthn credential identifier
+- `publicKey`: Stored public key for authentication
+- `counter`: Authentication counter
+- `createdAt`: Credential creation timestamp
+
+### Mashups
+
+The `Mashup` model stores generated movie combinations:
+
+- `id`: CUID-based unique identifier
+- `createdAt`: Timestamp of mashup creation
+- `movie1Id`: First source movie ID
+- `movie2Id`: Second source movie ID
+- `title`: AI-generated mashup title
+- `tagline`: AI-generated tagline
+- `plot`: AI-generated plot summary
+- `imageKey`: Reference to generated poster image in storage
+- `imageDescription`: AI-generated image prompt/description
+- `audioKey`: Reference to generated audio narration
+- `status`: Processing status (PENDING, COMPLETED, FAILED)
+- Relations:
+  - Links to two source `Movie` records
+
+## AI Models
+
+The application leverages several Cloudflare AI models for different functionalities:
+
+- **Text Generation**: `@cf/meta/llama-3.1-8b-instruct`
+
+  - Used for generating movie titles, taglines, plots, and poster descriptions
+  - Based on Meta's Llama 3.1 8B parameter model
+
+- **Image Generation**: `@cf/black-forest-labs/flux-1-schnell`
+
+  - Creates unique movie posters based on AI-generated descriptions
+  - Powered by Black Forest Labs' Flux model
+
+- **Text-to-Speech**: `@cf/myshell-ai/melotts`
+  - Generates audio descriptions of the mashup movies
+  - Uses MyShell AI's MeloTTS model for natural-sounding narration
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (Latest LTS version)
+- pnpm package manager
+- Cloudflare account (for deployment)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone [repository-url]
+cd movie-mashup
+```
+
+2. Install dependencies:
+
+```bash
 pnpm install
 ```
 
-## Running the dev server
+3. Set up environment variables:
 
-```shell
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file with your configuration values.
+
+4. Initialize the database:
+
+```bash
+pnpm migrate:dev
+```
+
+5. Seed the database with movies:
+
+```bash
+pnpm seed
+```
+
+6. Start the development server:
+
+```bash
 pnpm dev
 ```
 
-Point your browser to the URL displayed in the terminal (e.g. `http://localhost:5173/`). You should see a "Hello World" message in your browser.
+### Development
 
-## Deploying your app
+- `pnpm dev` - Start the development server
+- `pnpm build` - Build the application
+- `pnpm migrate:dev` - Run database migrations locally
+- `pnpm migrate:prd` - Run database migrations in production
+- `pnpm format` - Format code using Prettier
 
-### Wrangler Setup
+### Deployment
 
-Within your project's `wrangler.jsonc`:
+To deploy to Cloudflare:
 
-- Replace the `__change_me__` placeholders with a name for your application
-
-- Create a new D1 database:
-
-```shell
-npx wrangler d1 create my-project-db
+```bash
+pnpm release
 ```
 
-Copy the database ID provided and paste it into your project's `wrangler.jsonc` file:
+## Project Structure
 
-```jsonc
-{
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "my-project-db",
-      "database_id": "your-database-id",
-    },
-  ],
-}
-```
+- `/src/app` - Main application components
+- `/src/app/pages/mashups` - Movie mashup functionality
+- `/src/session` - User session management
+- `/prisma` - Database schema and migrations
+- `/migrations` - Database migration files
 
-### Setting up WebAuthn Relying Party ID (`RP_ID`)
+## Contributing
 
-For production, set your domain as the `RP_ID` via Cloudflare secrets:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-```shell
-wrangler secret put RP_ID
-```
+## License
 
-When prompted, enter your production domain (e.g., `my-app.example.com`).
-
-Note: The RP_ID must be a valid domain that matches your application's origin. For security reasons, WebAuthn will not work if these don't match.
-
-### Setting up Session Secret Key
-
-For production, generate a strong SECRET_KEY for signing session IDs. You can generate a secure random key using OpenSSL:
-
-```shell
-# Generate a 32-byte random key and encode it as base64
-openssl rand -base64 32
-```
-
-Then set this key as a Cloudflare secret:
-
-```shell
-wrangler secret put SECRET_KEY
-```
-
-Never use the same secret key for development and production environments, and avoid committing your secret keys to version control.
-
-### Setting up Cloudflare Turnstile (Bot Protection)
-
-1. Visit [Cloudflare Turnstile Dashboard](https://dash.cloudflare.com/?to=/:account/turnstile).
-
-2. Create a new Turnstile widget:
-
-   - Set **Widget Mode** to `invisible`
-   - Add your application's hostname to **Allowed hostnames**, e.g., `my-project-name.example.com`.
-
-3. Copy your **Site Key** into your application's `LoginPage.tsx`:
-
-```tsx
-// LoginPage.tsx
-const TURNSTILE_SITE_KEY = "<YOUR_SITE_KEY>";
-```
-
-4. Set your **Turnstile Secret Key** via Cloudflare secrets for production:
-
-```shell
-wrangler secret put TURNSTILE_SECRET_KEY
-```
-
-## Important Security Considerations
-
-### Username vs Email
-
-This starter intentionally uses usernames instead of emails. This decision prevents enumeration attacks and avoids requiring valid email addresses for registration.
-
-### Authentication Flow
-
-Authentication uses credential IDs from the authenticator instead of usernames or emails, significantly mitigating enumeration risks.
-
-## Bot Protection
-
-Registration is protected using [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/) to prevent automated bot registrations - while Cloudflare's built in bot detection will identify and block malicious patterns over time, Turnstile provides immediate verification before registration to prevent bot registrations from the start.
-
-## Further Reading
-
-- [RedwoodSDK Documentation](https://docs.rwsdk.com/)
-- [Cloudflare Workers Secrets](https://developers.cloudflare.com/workers/runtime-apis/secrets/)
-- [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
+This project is licensed under the MIT License - see the LICENSE file for details.
