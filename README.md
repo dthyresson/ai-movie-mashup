@@ -1,6 +1,12 @@
 # AI Movie Mashup
 
-AI Movie Mashup is fun a RedwoodSDK experiment that combines elements (aka "mashes up") from two different movies to create unique, AI-generated movie concepts. It uses artificial intelligence to generate new movie ideas, complete with titles, taglines, plots, posters, and audio of the plot.
+AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka "mashes up") from two different movies to create unique, AI-generated movie concepts. It uses artificial intelligence to generate new movie ideas, complete with titles, taglines, plots, posters, and audio of the plot.
+
+## Video Demo
+
+I recorded a video demo of the app that shows the main features in action.
+
+[👀 Watch the Demo](https://screen.studio/share/JRN2137W)
 
 ## Features
 
