@@ -57,7 +57,7 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
           Please wait while I generate your unique movie mashup with a title,
           tagline, plot, poster, and audio.
         </h3>
-        <p className="text-gray-700 animate-pulse text-center">
+        <p className="text-gray-700 animate-pulse text-center mt-8">
           This usually takes about 30 seconds.
         </p>
         <div className="flex justify-center text-neutral-700 my-8">
@@ -79,7 +79,7 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
+    <div className="font-screenwriter max-w-4xl mx-auto p-6 bg-purple-50 rounded-lg shadow-lg">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-neutral-800 mb-2">
           {mashup.title}
@@ -89,14 +89,14 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
         </h2>
         <div className="mb-8">
           <div className="flex flex-col items-center">
-            <div className="aspect-square w-2xl rounded-lg overflow-hidden shadow-xl ">
+            <div className="aspect-square w-2xl rounded-lg overflow-hidden shadow-xl border-2 border-purple-300">
               <img
                 src={`/api/mashups/${id}/poster`}
                 alt={mashup.title}
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-sm text-center text-gray-400 mt-2 max-w-lg">
+            <p className="text-md text-center text-neutral-500 mt-4 max-w-lg">
               {mashup.imageDescription}
             </p>
           </div>

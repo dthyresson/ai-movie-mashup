@@ -27,6 +27,7 @@
     "types": "pnpm tsc"
   },
   "dependencies": {
+    "@fontsource-variable/lexend": "^5.2.6",
     "@fontsource/special-elite": "^5.2.5",
     "@prisma/adapter-d1": "^6.4.1",
     "@prisma/client": "^6.4.1",

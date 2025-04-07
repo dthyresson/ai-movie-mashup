@@ -10,29 +10,29 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <title>Movie Mashups</title>
       <TurnstileScript />
       <script type="module" src="/src/client.tsx"></script>
-      <link rel="stylesheet" href="/src/styles.css" />
+      <link rel="stylesheet" href="/src/app.css" />
     </head>
     <body>
       <main className="container mx-auto max-w-full">
         {/* Header Navigation */}
-        <nav className="bg-neutral-600 text-white shadow-md">
+        <nav className="bg-gradient-to-r from-purple-800 to-purple-900 text-white shadow-lg border-b-2 border-neutral-900 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
           <div className="p-4">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold hover:text-neutral-200 transition-colors">
                 <a
                   href="/"
-                  className="text-2xl font-bold hover:text-neutral-200 transition-colors"
+                  className="font-banner font-black text-2xl hover:text-purple-200 transition-colors"
                 >
                   AI Movie Mashups
                 </a>
               </h1>
 
-              <nav>
+              <nav className="font-banner">
                 <ul className="flex space-x-6">
                   <li>
                     <a
                       href={link("/mashups")}
-                      className="hover:text-neutral-200 transition-colors"
+                      className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
                     >
                       All
                     </a>
@@ -40,7 +40,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
                   <li>
                     <a
                       href={link("/mashups/new")}
-                      className="hover:text-neutral-200 transition-colors"
+                      className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
                     >
                       New
                     </a>
@@ -57,7 +57,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         </div>
 
         {/* Footer */}
-        <footer className="border-t p-4">
+        <footer className="font-banner border-purple-600 border-t p-4">
           <div className="flex justify-between text-gray-600">
             <p>© {new Date().getFullYear()} DT</p>
             <p>Made with RedwoodSDK</p>

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/lexend':
+        specifier: ^5.2.6
+        version: 5.2.6
       '@fontsource/special-elite':
         specifier: ^5.2.5
         version: 5.2.5
@@ -575,6 +578,9 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@fontsource-variable/lexend@5.2.6':
+    resolution: {integrity: sha512-rDBYVTp0cMaj/UNK2m5EPHMZw3MZcl2CXdZVlv+OQwpg88r5g9prS60mayZ1N+hyH7XRka2YExAFEYBLEv0NRQ==}
 
   '@fontsource/special-elite@5.2.5':
     resolution: {integrity: sha512-QsRlePOb2e6JEwuqZMv76TXiV0nkiCNgiy8LmOTAnhQ2ni5eC1BtTpvsyKeVQ3PZr7ib1N6TsIqAuNc+V9gILQ==}
@@ -3398,6 +3404,8 @@ snapshots:
     optional: true
 
   '@fastify/busboy@2.1.1': {}
+
+  '@fontsource-variable/lexend@5.2.6': {}
 
   '@fontsource/special-elite@5.2.5': {}
 

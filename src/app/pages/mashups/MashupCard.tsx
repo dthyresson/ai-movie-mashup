@@ -23,7 +23,7 @@ export function MashupCard({
   movie2,
 }: MashupCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 hover:scale-105 hover:cursor-pointer">
+    <div className="font-screenwriter bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 hover:scale-105 hover:cursor-pointer">
       <a href={`/mashups/${id}`} className="block">
         <div className="aspect-w-16 aspect-h-9">
           <img
@@ -42,10 +42,10 @@ export function MashupCard({
           <p className="text-gray-700 text-sm line-clamp-3">{plot}</p>
           <div className="mt-4 flex justify-between items-center">
             <div className="flex space-x-2">
-              <span className="text-xs bg-neutral-100 text-neutral-800 px-2 py-1 rounded">
+              <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
                 {movie1.title}
               </span>
-              <span className="text-xs bg-neutral-100 text-neutral-800 px-2 py-1 rounded">
+              <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
                 {movie2.title}
               </span>
             </div>

@@ -80,7 +80,7 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
               {!isMashingUp && selectedMovies.length > 0 && (
                 <button
                   onClick={handleClearSelection}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className=" px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   Clear Selection
                 </button>
@@ -88,9 +88,9 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
               <button
                 onClick={handleMashup}
                 disabled={selectedMovies.length !== 2 || isMashingUp}
-                className={`px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400 ${
+                className={`font-banner font-bold px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400 ${
                   selectedMovies.length === 2 && !isMashingUp
-                    ? "bg-neutral-600 text-white hover:bg-neutral-700"
+                    ? "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
                     : "bg-neutral-300 text-white cursor-not-allowed opacity-60"
                 }`}
               >
@@ -112,8 +112,8 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
                 className={`bg-white rounded-lg shadow-md border overflow-hidden cursor-pointer transition-transform hover:scale-105 ${
                   selectedMovies.includes(movie.id)
                     ? selectedMovies[0] === movie.id
-                      ? "border-blue-500 ring-2 ring-blue-500"
-                      : "border-green-500 ring-2 ring-green-500"
+                      ? "border-purple-500 ring-2 ring-purple-500"
+                      : "border-fuchsia-500 ring-2 ring-fuchsia-500"
                     : "border-gray-200"
                 }`}
               >
