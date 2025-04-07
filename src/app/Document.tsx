@@ -12,8 +12,8 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <script type="module" src="/src/client.tsx"></script>
       <link rel="stylesheet" href="/src/app.css" />
     </head>
-    <body>
-      <main className="container mx-auto max-w-full">
+    <body className="flex flex-col min-h-screen">
+      <main className="flex flex-col flex-grow">
         {/* Header Navigation */}
         <nav className="bg-gradient-to-r from-purple-800 to-purple-900 text-white shadow-lg border-b-2 border-neutral-900 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
           <div className="p-4">
@@ -52,7 +52,10 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         </nav>
 
         {/* Main Content Area */}
-        <div id="root" className="container mx-auto max-w-screen-lg p-4">
+        <div
+          id="root"
+          className="container mx-auto max-w-screen-xl p-4 flex-grow"
+        >
           {children}
         </div>
 
@@ -60,7 +63,16 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         <footer className="font-banner border-purple-600 border-t p-4">
           <div className="flex justify-between text-gray-600">
             <p>© {new Date().getFullYear()} DT</p>
-            <p>Made with RedwoodSDK</p>
+            <p>
+              Made with{" "}
+              <a
+                href="https://www.rwsdk.com"
+                target="_blank"
+                className="text-purple-600"
+              >
+                RedwoodSDK
+              </a>
+            </p>
           </div>
         </footer>
       </main>

@@ -32,14 +32,14 @@ export function MashupCard({
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="p-4">
-          <h2 className="text-xl font-semibold text-neutral-800 mb-2 line-clamp-1">
+        <div className="text-center p-4">
+          <h2 className="text-2xl font-semibold text-neutral-800 mb-2 line-clamp-1">
             {title}
           </h2>
-          <p className="text-sm italic text-gray-600 mb-2 line-clamp-1">
+          <p className="text-lg italic text-gray-600 mb-2 line-clamp-1">
             "{tagline}"
           </p>
-          <p className="text-gray-700 text-sm line-clamp-3">{plot}</p>
+          <p className="text-gray-700 text-sm line-clamp-3 text-left">{plot}</p>
           <div className="mt-4 flex justify-between items-center">
             <div className="flex space-x-2">
               <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">

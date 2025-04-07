@@ -11,8 +11,10 @@ export function MovieCard({ movie }: { movie: Movie }) {
         />
       </div>
       <div className="p-4">
-        <p className="mt-2 text-lg font-bold text-gray-800">{movie.title}</p>
-        <p className="mt-2 font-normal   text-gray-500">{movie.overview}</p>
+        <p className="mt-2 text-xl font-bold text-gray-800">{movie.title}</p>
+        <p className="mt-2 font-normal text-sm text-gray-500">
+          {movie.overview}
+        </p>
       </div>
     </div>
   );

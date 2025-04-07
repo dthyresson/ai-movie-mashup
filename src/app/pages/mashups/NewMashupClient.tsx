@@ -56,9 +56,9 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
       {/* Selection Panel Header - Fixed at top */}
       <div className="sticky top-0 z-10 bg-white rounded-lg shadow-lg mb-6">
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">
+          <h2 className="font-banner text-xl font-semibold text-gray-800">
             {selectedMovies.length === 0
-              ? "Start by selecting first movie to mashup ..."
+              ? "Start by selecting your first movie to mashup ..."
               : selectedMovies.length === 1
                 ? "Pick one more movie to mashup ..."
                 : "Mash it up!"}
@@ -66,9 +66,9 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
         </div>
         <div className="p-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div>
+            <div className="font-banner text-xl">
               {selectedMovieDetails.length > 0 && (
-                <p className="text-gray-600 mt-1 font-bold  ">
+                <p className="text-purple-800 mt-1 font-bold  ">
                   {selectedMovieDetails
                     .map((movie) => movie.title)
                     .filter(Boolean)
@@ -80,7 +80,7 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
               {!isMashingUp && selectedMovies.length > 0 && (
                 <button
                   onClick={handleClearSelection}
-                  className=" px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  className="font-banner px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
                   Clear Selection
                 </button>
@@ -103,13 +103,13 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
 
       {/* Scrollable Movie Grid */}
       {!isMashingUp && (
-        <div className="h-[calc(100vh-300px)] overflow-y-auto">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4 p-4">
+        <div className="h-[calc(100vh-300px)] overflow-y-auto border-t-2 border-b-2 border-neutral-300 border-dashed">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 p-4">
             {movies?.map((movie) => (
               <li
                 key={movie.id}
                 onClick={() => handleMovieClick(movie.id)}
-                className={`bg-white rounded-lg shadow-md border overflow-hidden cursor-pointer transition-transform hover:scale-105 ${
+                className={`bg-white rounded-lg shadow-md border overflow-hidden cursor-pointer transition-transform hover:scale-102 hover:border-purple-300 border-purple-100 ring-2 ring-purple-100 ${
                   selectedMovies.includes(movie.id)
                     ? selectedMovies[0] === movie.id
                       ? "border-purple-500 ring-2 ring-purple-500"
@@ -117,15 +117,15 @@ export function NewMashupClient({ movies }: { movies: Movie[] }) {
                     : "border-gray-200"
                 }`}
               >
-                <div className="aspect-[2/3] relative">
+                <div className="aspect-[2/3] relative ">
                   <img
                     src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
                     alt={movie.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="p-4">
-                  <h2 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">
+                <div className="p-4 font-screenwriter">
+                  <h2 className="text-xl text-center font-bold text-gray-800 mb-2 line-clamp-1">
                     {movie.title}
                   </h2>
                   <p className="text-sm text-gray-600 line-clamp-3">

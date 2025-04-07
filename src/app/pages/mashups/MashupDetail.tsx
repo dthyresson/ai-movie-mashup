@@ -57,10 +57,10 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
           Please wait while I generate your unique movie mashup with a title,
           tagline, plot, poster, and audio.
         </h3>
-        <p className="text-gray-700 animate-pulse text-center mt-8">
+        <p className="text-neutral-700 animate-pulse text-center mt-8">
           This usually takes about 30 seconds.
         </p>
-        <div className="flex justify-center text-neutral-700 my-8">
+        <div className="flex justify-center text-purple-700 my-8">
           <Spinner />
         </div>
       </div>
@@ -79,45 +79,55 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
   }
 
   return (
-    <div className="font-screenwriter max-w-4xl mx-auto p-6 bg-purple-50 rounded-lg shadow-lg">
+    <div className="font-screenwriter w-full mx-auto p-6 bg-purple-50 rounded-lg shadow-lg">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-neutral-800 mb-2">
+        <h1 className="text-4xl font-bold text-neutral-800 mb-2">
           {mashup.title}
         </h1>
-        <h2 className="text-xl italic text-gray-600 mb-4">
+        <h2 className="text-2xl italic text-gray-600 mb-4">
           "{mashup.tagline}"
         </h2>
-        <div className="mb-8">
-          <div className="flex flex-col items-center">
-            <div className="aspect-square w-2xl rounded-lg overflow-hidden shadow-xl border-2 border-purple-300">
-              <img
-                src={`/api/mashups/${id}/poster`}
-                alt={mashup.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <p className="text-md text-center text-neutral-500 mt-4 max-w-lg">
-              {mashup.imageDescription}
-            </p>
-          </div>
-        </div>
-        <p className="text-2xl text-gray-900 leading-relaxed max-w-2xl mx-auto text-left">
-          {mashup.plot}
-        </p>
         {mashup.audioKey && mashup.audioKey !== "" && (
-          <div className="my-4 flex justify-center ">
+          <div className="mt-auto">
             <audio
               src={`/api/mashups/${id}/audio`}
               controls
-              className="w-full max-w-2xl"
+              className="w-full"
             />
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <MovieCard movie={mashup.movie1} />
-        <MovieCard movie={mashup.movie2} />
+      {/* Two-column layout for poster and plot */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8">
+        {/* Left column: Poster - takes up 2/5 */}
+        <div className="lg:col-span-2 flex flex-col items-center">
+          <div className="aspect-square rounded-lg overflow-hidden shadow-xl border-2 border-neutral-300">
+            <img
+              src={`/api/mashups/${id}/poster`}
+              alt={mashup.title}
+              className="w-full h-full object-cover rounded-lg p-2"
+            />
+          </div>
+        </div>
+
+        {/* Right column: Plot - takes up 3/5 */}
+        <div className="lg:col-span-3 flex flex-col">
+          <p className="text-xl text-gray-900 leading-relaxed mb-6">
+            {mashup.plot}
+          </p>
+        </div>
+      </div>
+
+      <p className="text-md text-neutral-500 mt-4 w-full bg-purple-100 p-4 rounded-lg">
+        {mashup.imageDescription}
+      </p>
+
+      <div className="max-w-3xl mx-auto mt-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <MovieCard movie={mashup.movie1} />
+          <MovieCard movie={mashup.movie2} />
+        </div>
       </div>
     </div>
   );
