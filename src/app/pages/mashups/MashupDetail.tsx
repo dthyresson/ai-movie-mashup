@@ -49,12 +49,14 @@ export function MashupDetail({ id, status, ...props }: MashupDetailProps) {
     return (
       <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-neutral-800 mb-4 space-y-8">
-          I've queued your AI movie mashup ...
+          I've queued your {mashup.movie1.title} and {mashup.movie2.title} AI
+          movie mashup ...
         </h1>
-        <p className="text-gray-700 text-lg">
+
+        <h3 className="text-gray-700 text-lg">
           Please wait while I generate your a unique movie mashup with a title,
           tagline, plot, poster, and audio.
-        </p>
+        </h3>
         <p className="text-gray-700 animate-pulse text-center">
           This usually takes about 30 seconds.
         </p>
