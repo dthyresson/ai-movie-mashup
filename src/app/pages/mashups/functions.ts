@@ -4,52 +4,62 @@ import { getMovie } from "../movies/functions";
 import type { Movie } from "@prisma/client";
 import { db } from "@/db";
 import { getMashupPrompt, getPosterPrompt } from "./prompts";
+import { env } from "cloudflare:workers";
 
 const TEXT_GENERATION_MODEL = "@cf/meta/llama-3.1-8b-instruct";
 const IMAGE_GENERATION_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const TTS_MODEL = "@cf/myshell-ai/melotts";
 
+const DEFAULT_GATEWAY_ID = "default";
+
 // Function to generate the movie mashup plot, title, and tagline
 async function generateMashupContent(
   movie1Details: Movie,
   movie2Details: Movie,
-  env: Env,
 ) {
   const { systemPrompt, userPrompt, assistantPrompt } = getMashupPrompt(
     movie1Details,
     movie2Details,
   );
 
-  const result = (await env!.AI.run(TEXT_GENERATION_MODEL, {
-    max_tokens: 512,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-      {
-        role: "assistant",
-        content: assistantPrompt,
-      },
-    ],
-    stream: false,
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        type: "object",
-        properties: {
-          title: {
-            type: "string",
-          },
-          tagline: {
-            type: "string",
-          },
-          plot: {
-            type: "string",
-          },
+  const result = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      max_tokens: 512,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+        {
+          role: "assistant",
+          content: assistantPrompt,
         },
-        required: ["title", "tagline", "plot"],
+      ],
+      stream: false,
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          type: "object",
+          properties: {
+            title: {
+              type: "string",
+            },
+            tagline: {
+              type: "string",
+            },
+            plot: {
+              type: "string",
+            },
+          },
+          required: ["title", "tagline", "plot"],
+        },
       },
     },
-  })) as unknown as {
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as {
     response: { title: string; tagline: string; plot: string };
   };
 
@@ -61,7 +71,6 @@ async function generatePosterPrompt(
   title: string,
   tagline: string,
   plot: string,
-  env: Env,
 ) {
   const { systemPrompt, userPrompt, assistantPrompt } = getPosterPrompt(
     title,
@@ -69,21 +78,29 @@ async function generatePosterPrompt(
     plot,
   );
 
-  const imagePromptResult = (await env.AI.run(TEXT_GENERATION_MODEL, {
-    messages: [
-      { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: userPrompt,
+  const imagePromptResult = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      messages: [
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: userPrompt,
+        },
+        {
+          role: "assistant",
+          content: assistantPrompt,
+        },
+      ],
+      stream: false,
+      max_tokens: 512,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
       },
-      {
-        role: "assistant",
-        content: assistantPrompt,
-      },
-    ],
-    stream: false,
-    max_tokens: 512,
-  })) as unknown as {
+    },
+  )) as unknown as {
     response: string;
   };
 
@@ -92,7 +109,7 @@ async function generatePosterPrompt(
 }
 
 // Function to generate the poster image
-async function generatePosterImage(prompt: string, env: Env) {
+async function generatePosterImage(prompt: string) {
   const response = await env.AI.run(IMAGE_GENERATION_MODEL, {
     prompt: prompt,
   });
@@ -116,15 +133,18 @@ async function generatePosterImage(prompt: string, env: Env) {
   return image.key;
 }
 
-async function generateAudio(
-  title: string,
-  tagline: string,
-  plot: string,
-  env: Env,
-) {
-  const result = (await env.AI.run(TTS_MODEL, {
-    prompt: `Now playing. ${title}. ${tagline}. ${plot}`,
-  })) as unknown as { audio: string };
+async function generateAudio(title: string, tagline: string, plot: string) {
+  const result = (await env.AI.run(
+    TTS_MODEL,
+    {
+      prompt: `Now playing. ${title}. ${tagline}. ${plot}`,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as { audio: string };
 
   // Convert base64 string to a Blob
   const base64Data = result.audio || "";
@@ -149,12 +169,10 @@ export async function mashupMovies({
   id,
   firstMovieId,
   secondMovieId,
-  env,
 }: {
   id: string;
   firstMovieId: string;
   secondMovieId: string;
-  env: Env;
 }) {
   const movie1Details = await getMovie(firstMovieId);
   const movie2Details = await getMovie(secondMovieId);
@@ -168,21 +186,15 @@ export async function mashupMovies({
   const { title, tagline, plot } = await generateMashupContent(
     movie1Details,
     movie2Details,
-    env,
   );
 
   // Generate the poster image prompt
-  const posterDescription = await generatePosterPrompt(
-    title,
-    tagline,
-    plot,
-    env,
-  );
+  const posterDescription = await generatePosterPrompt(title, tagline, plot);
 
   // Generate the poster image
-  const imageKey = await generatePosterImage(posterDescription, env);
+  const imageKey = await generatePosterImage(posterDescription);
 
-  const audioKey = await generateAudio(title, tagline, plot, env);
+  const audioKey = await generateAudio(title, tagline, plot);
 
   console.debug({ title, tagline, plot }, "The AI response");
 

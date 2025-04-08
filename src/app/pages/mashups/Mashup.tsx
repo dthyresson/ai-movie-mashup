@@ -2,14 +2,9 @@
 
 import { getMashupById } from "./functions";
 import { MashupDetail } from "@/app/pages/mashups/MashupDetail";
+import { RequestInfo } from "@redwoodjs/sdk/worker";
 
-export async function Mashup({
-  params,
-  env,
-}: {
-  params: { id: string };
-  env: Env;
-}) {
+export async function Mashup({ params }: RequestInfo<{ id: string }>) {
   const mashup = await getMashupById(params.id);
 
   if (!mashup) {

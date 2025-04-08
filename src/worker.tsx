@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+import { RequestInfo } from "@redwoodjs/sdk/worker";
 import { defineApp, ErrorResponse } from "@redwoodjs/sdk/worker";
 import { route, render, prefix } from "@redwoodjs/sdk/router";
 import { Document } from "@/app/Document";
@@ -20,14 +22,14 @@ export type AppContext = {
   user: User | null;
 };
 
-const app = defineApp<AppContext>([
+const app = defineApp([
   setCommonHeaders(),
-  async ({ env, appContext, request, headers }) => {
+  async ({ ctx, request, headers }) => {
     await setupDb(env);
     setupSessionStore(env);
 
     try {
-      appContext.session = await sessions.load(request);
+      ctx.session = await sessions.load(request);
     } catch (error) {
       if (error instanceof ErrorResponse && error.code === 401) {
         await sessions.remove(request, headers);
@@ -42,10 +44,10 @@ const app = defineApp<AppContext>([
       throw error;
     }
 
-    if (appContext.session?.userId) {
-      appContext.user = await db.user.findUnique({
+    if (ctx.session?.userId) {
+      ctx.user = await db.user.findUnique({
         where: {
-          id: appContext.session.userId,
+          id: ctx.session.userId,
         },
       });
     }
@@ -54,8 +56,8 @@ const app = defineApp<AppContext>([
     route("/", Mashups),
     prefix("/mashups", mashupRoutes),
     route("/protected", [
-      ({ appContext }) => {
-        if (!appContext.user) {
+      ({ ctx }: RequestInfo) => {
+        if (!ctx.user) {
           return new Response(null, {
             status: 302,
             headers: { Location: "/user/login" },
@@ -66,13 +68,30 @@ const app = defineApp<AppContext>([
     ]),
     prefix("/user", userRoutes),
     prefix("/api", apiRoutes),
+    route(
+      "/mashups/:id/audio",
+      async ({ params }: RequestInfo<{ id: string }>) => {
+        const id = params.id;
+        const mashup = await db.mashup.findUnique({
+          where: {
+            id,
+          },
+        });
+
+        if (!mashup) {
+          return new Response("Mashup not found", { status: 404 });
+        }
+
+        return new Response(null, { status: 200 });
+      },
+    ),
   ]),
 ]);
 
 export default {
   fetch: app.fetch,
   // Process the message queue
-  async queue(batch, env) {
+  async queue(batch, _env) {
     for (const message of batch.messages) {
       console.log("handling message" + JSON.stringify(message));
 
@@ -91,7 +110,6 @@ export default {
             id,
             firstMovieId,
             secondMovieId,
-            env,
           });
 
           console.debug("updating mashup via Queue", mashup);
