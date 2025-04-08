@@ -1,7 +1,7 @@
 "use server";
 
 import { getMashups } from "./functions";
-import { MashupCard } from "@/app/pages/mashups/MashupCard";
+import { MashupCard } from "@/app/pages/mashups/components/MashupCard";
 import { link } from "@/app/shared/links";
 
 export async function Mashups() {

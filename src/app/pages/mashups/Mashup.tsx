@@ -1,7 +1,7 @@
 "use server";
 
 import { getMashupById } from "./functions";
-import { MashupDetail } from "@/app/pages/mashups/MashupDetail";
+import { MashupDetail } from "@/app/pages/mashups/components/MashupDetail";
 import { RequestInfo } from "@redwoodjs/sdk/worker";
 
 export async function Mashup({ params }: RequestInfo<{ id: string }>) {
