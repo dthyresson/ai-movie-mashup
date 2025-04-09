@@ -11,13 +11,13 @@ import { sessions, setupSessionStore } from "./session/store";
 import { Session } from "./session/durableObject";
 import { db, setupDb } from "./db";
 import type { User } from "@prisma/client";
-import { apiRoutes } from "./app/api/routes";
-import { mashupRoutes } from "./app/pages/mashups/routes";
-import { mashupMovies } from "./app/pages/mashups/functions";
-import { agentRoutes } from "./app/agents/routes";
+import { apiRoutes } from "@/app/api/routes";
+import { mashupRoutes } from "@/app/pages/mashups/routes";
+import { mashupMovies } from "@/app/pages/mashups/functions";
+import { agentRoutes } from "@/app/agents/routes";
 
 export { SessionDurableObject } from "./session/durableObject";
-export { MashupAgent } from "./app/agents/MashupAgent";
+export { MashupAgent } from "@/app/agents/MashupAgent";
 
 export type AppContext = {
   session: Session | null;

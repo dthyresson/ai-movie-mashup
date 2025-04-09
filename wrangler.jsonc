@@ -30,7 +30,6 @@
       {
         "name": "MASHUP_AGENT",
         "class_name": "MashupAgent"
-        // "script_name": "src/app/agents/MyAgent.ts"
       }
     ]
   },

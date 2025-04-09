@@ -2,15 +2,23 @@ import { Agent, unstable_callable as callable } from "agents";
 import type { Connection } from "agents";
 import { db } from "@/db";
 import {
-  generateMashupTitle,
-  generateMashupPlot,
-  generateMashupTagline,
+  // generateMashupTitle,
+  // generateMashupPlot,
+  // generateMashupTagline,
   generatePosterImage,
-  generatePosterPrompt,
+  // generatePosterPrompt
   generateAudio,
 } from "@/app/pages/mashups/functions";
-
 import type { Mashup } from "@prisma/client";
+import { createWorkersAI } from "workers-ai-provider";
+import { streamText } from "ai";
+import { env } from "cloudflare:workers";
+import {
+  getMashupPlotPrompt,
+  getMashupTitlePrompt,
+  getMashupTaglinePrompt,
+  getPosterPrompt,
+} from "@/app/pages/mashups/prompts";
 // Pass the Env as a TypeScript type argument
 // Any services connected to your Agent or Worker as Bindings
 // are then available on this.env.<BINDING_NAME>
@@ -113,6 +121,11 @@ export class MashupAgent extends Agent<Env, State> {
   async pickMovies(movie1: string, movie2: string) {
     console.log("Picking movies:", movie1, movie2);
 
+    const workersai = createWorkersAI({ binding: env.AI });
+    const model = workersai("@cf/meta/llama-3.1-8b-instruct", {
+      safePrompt: true,
+    });
+
     const movie1Data = await db.movie.findUnique({
       where: {
         id: movie1,
@@ -127,9 +140,12 @@ export class MashupAgent extends Agent<Env, State> {
 
     // If both movies are found, generate the mashup content
     if (movie1Data && movie2Data) {
+      // Update the state with the initial values
+      let title = `Mashing up ${movie1Data.title} and ${movie2Data.title} ...`;
+
       this.setState({
         ...this.state,
-        title: `Mashing up ${movie1Data.title} and ${movie2Data.title} ...`,
+        title,
         tagline: `...`,
         plot: `...`,
         movie1Id: movie1,
@@ -139,7 +155,11 @@ export class MashupAgent extends Agent<Env, State> {
         audioKey: "",
       });
 
-      const title = await generateMashupTitle(movie1Data, movie2Data);
+      const {
+        systemPrompt: titleSystemPrompt,
+        userPrompt: titleUserPrompt,
+        assistantPrompt: titleAssistantPrompt,
+      } = getMashupTitlePrompt(movie1Data, movie2Data);
 
       this.setState({
         ...this.state,
@@ -147,29 +167,93 @@ export class MashupAgent extends Agent<Env, State> {
         tagline: "Writing a tagline...",
       });
 
-      const tagline = await generateMashupTagline(
-        title,
-        movie1Data,
-        movie2Data,
-      );
+      const { textStream: titleStream } = streamText({
+        model,
+        messages: [
+          { role: "system", content: titleSystemPrompt },
+          { role: "user", content: titleUserPrompt },
+          {
+            role: "assistant",
+            content: titleAssistantPrompt,
+          },
+        ],
+      });
+
+      title = "";
+
+      for await (const delta of titleStream) {
+        title += delta;
+        this.setState({
+          ...this.state,
+          title,
+        });
+      }
+
+      let tagline = "Writing a tagline...";
+
+      const {
+        systemPrompt: taglineSystemPrompt,
+        userPrompt: taglineUserPrompt,
+        assistantPrompt: taglineAssistantPrompt,
+      } = getMashupTaglinePrompt(title, movie1Data, movie2Data);
+
+      tagline = "";
+      const { textStream: taglineStream } = streamText({
+        model,
+        maxTokens: 512,
+        messages: [
+          { role: "system", content: taglineSystemPrompt },
+          { role: "user", content: taglineUserPrompt },
+          {
+            role: "assistant",
+            content: taglineAssistantPrompt,
+          },
+        ],
+      });
+
+      for await (const delta of taglineStream) {
+        tagline += delta;
+        this.setState({
+          ...this.state,
+          tagline,
+        });
+      }
+
+      let plot = "I'm screenwriting ...";
 
       this.setState({
         ...this.state,
         tagline: tagline,
-        plot: "I'm screenwriting a plot ...",
+        plot,
       });
 
-      const plot = await generateMashupPlot(
-        title,
-        tagline,
-        movie1Data,
-        movie2Data,
-      );
+      const {
+        systemPrompt: plotSystemPrompt,
+        userPrompt: plotUserPrompt,
+        assistantPrompt: plotAssistantPrompt,
+      } = getMashupPlotPrompt(title, tagline, movie1Data, movie2Data);
 
-      this.setState({
-        ...this.state,
-        plot: plot,
+      const { textStream: plotStream } = streamText({
+        model,
+        messages: [
+          { role: "system", content: plotSystemPrompt },
+          { role: "user", content: plotUserPrompt },
+          {
+            role: "assistant",
+            content: plotAssistantPrompt,
+          },
+        ],
       });
+
+      plot = "";
+
+      for await (const delta of plotStream) {
+        plot += delta;
+        this.setState({
+          ...this.state,
+          plot,
+        });
+      }
 
       this.setState({
         ...this.state,
@@ -178,11 +262,34 @@ export class MashupAgent extends Agent<Env, State> {
       });
 
       // Generate the poster image prompt
-      const posterDescription = await generatePosterPrompt(
-        title,
-        tagline,
-        plot,
-      );
+      const {
+        systemPrompt: posterSystemPrompt,
+        userPrompt: posterUserPrompt,
+        assistantPrompt: posterAssistantPrompt,
+      } = getPosterPrompt(title, tagline, plot);
+
+      let posterDescription = "";
+
+      const { textStream: posterStream } = streamText({
+        model,
+        maxTokens: 512,
+        messages: [
+          { role: "system", content: posterSystemPrompt },
+          { role: "user", content: posterUserPrompt },
+          {
+            role: "assistant",
+            content: posterAssistantPrompt,
+          },
+        ],
+      });
+
+      for await (const delta of posterStream) {
+        posterDescription += delta;
+        this.setState({
+          ...this.state,
+          imageDescription: posterDescription,
+        });
+      }
 
       this.setState({
         ...this.state,

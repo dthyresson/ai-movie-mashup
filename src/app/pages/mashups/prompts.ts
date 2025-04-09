@@ -40,7 +40,7 @@ export const getMashupTitlePrompt = (movie1: Movie, movie2: Movie) => {
   const systemPrompt = `
     You are a movie screenwriter.
     You are given two movies.
-    You are to write an enaging title for a mashup of the two movies.
+    You are to write a short, but engaging title for a mashup of the two movies.
     The mashup should be a new movie that is a fun, quirky combination of the two movies and their characters, plots, and settings.
     The mashup should be in the style of the two movies.
 
@@ -76,6 +76,8 @@ export const getMashupPlotPrompt = (
     You are to write an enaging plot summary for a mashup of the two movies that matches the title and tagline.
     The mashup should be a new movie that is a fun, quirky combination of the two movies and their characters, plots, and settings.
     The mashup should be in the style of the two movies.
+    The plot summary should be 300 words or less and should be a single paragraph.
+    The plot summary should be able to be read in less than 20 seconds.
 
     Important:
     
@@ -91,7 +93,7 @@ export const getMashupPlotPrompt = (
     `;
 
   const assistantPrompt = `
-    Always return a the plot summary in plain text with no other text or formatting or qu.
+    Always return a the plot summary in plain text with no other text or formatting or quotation marks around the plot summary.
 `;
 
   return { systemPrompt, userPrompt, assistantPrompt };
@@ -109,6 +111,7 @@ export const getMashupTaglinePrompt = (
     You are to write an enaging tagline for a mashup of the two movies.
     The mashup should be a new movie that is a fun, quirky combination of the two movies and their characters, plots, and settings.
     The mashup should be in the style of the two movies.
+    The tagline should be 10 words or less appropriate for a movie poster.
 
     Important:
     

@@ -12,6 +12,10 @@ import {
 } from "./prompts";
 import { env } from "cloudflare:workers";
 
+import { createWorkersAI } from "workers-ai-provider";
+import { streamText } from "ai";
+import { createStreamableValue } from "ai/rsc";
+
 const TEXT_GENERATION_MODEL = "@cf/meta/llama-3.1-8b-instruct";
 const IMAGE_GENERATION_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const TTS_MODEL = "@cf/myshell-ai/melotts";
@@ -122,30 +126,52 @@ export async function generateMashupPlot(
     movie2Details,
   );
 
-  const { response } = (await env.AI.run(
-    TEXT_GENERATION_MODEL,
-    {
-      max_tokens: 512,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-        {
-          role: "assistant",
-          content: assistantPrompt,
-        },
-      ],
-      stream: false,
-    },
-    {
-      gateway: {
-        id: DEFAULT_GATEWAY_ID,
-      },
-    },
-  )) as unknown as {
-    response: string;
-  };
+  // const response = await env.AI.run(
+  //   TEXT_GENERATION_MODEL,
+  //   {
+  //     max_tokens: 512,
+  //     messages: [
+  //       { role: "system", content: systemPrompt },
+  //       { role: "user", content: userPrompt },
+  //       {
+  //         role: "assistant",
+  //         content: assistantPrompt,
+  //       },
+  //     ],
+  //     stream: true,
+  //   },
+  //   {
+  //     gateway: {
+  //       id: DEFAULT_GATEWAY_ID,
+  //     },
+  //   },
+  // );
 
-  return response;
+  const workersai = createWorkersAI({ binding: env.AI });
+  const model = workersai("@cf/meta/llama-3.1-8b-instruct", {
+    safePrompt: true,
+  });
+  const stream = createStreamableValue("");
+
+  const { textStream } = streamText({
+    model,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+      {
+        role: "assistant",
+        content: assistantPrompt,
+      },
+    ],
+  });
+
+  for await (const delta of textStream) {
+    stream.update(delta);
+  }
+
+  stream.done();
+
+  return stream;
 }
 
 // Function to generate the movie mashup tagline
