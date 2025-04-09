@@ -33,6 +33,10 @@
       {
         "name": "SESSION_DURABLE_OBJECT",
         "class_name": "SessionDurableObject"
+      },
+      {
+        "name": "MY_AGENT",
+        "class_name": "MyAgent"
       }
     ]
   },
