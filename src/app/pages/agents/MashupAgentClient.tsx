@@ -1,167 +1,245 @@
 "use client";
 
-import { useAgent } from "agents/react";
 import { useState, useEffect } from "react";
+import { useAgent } from "agents/react";
 import { getMovies } from "@/app/pages/movies/functions";
 import { Movie } from "@prisma/client";
 
-export default function MashupAgentClient() {
-  const [title, setTitle] = useState("");
-  const [tagline, setTagline] = useState("");
-  const [plot, setPlot] = useState("");
-  const [imageDescription, setImageDescription] = useState("");
-  const [imageKey, setImageKey] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+// MovieSelector component
+interface MovieSelectorProps {
+  label: string;
+  selectedMovie: string;
+  onSelect: (movieId: string) => void;
+}
+
+const MovieSelector: React.FC<MovieSelectorProps> = ({
+  label,
+  selectedMovie,
+  onSelect,
+}) => {
   const [movies, setMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const fetchedMovies = await getMovies();
+      setMovies(fetchedMovies);
+    };
+    fetchMovies();
+  }, []);
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <select
+        className="w-full p-2 border border-gray-300 rounded-md"
+        value={selectedMovie}
+        onChange={(e) => onSelect(e.target.value)}
+      >
+        <option value="">Select a movie</option>
+        {movies.map((movie) => (
+          <option key={movie.id} value={movie.id}>
+            {movie.title}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+// Add this interface near the top of the file with other interfaces
+interface MessageData {
+  title?: string;
+  tagline?: string;
+  plot?: string;
+  imageKey?: string;
+  imageDescription?: string;
+  audioKey?: string;
+}
+
+interface MessageLog {
+  raw: string;
+  parsed: MessageData;
+}
+
+export default function MashupAgentClient() {
   const [selectedMovie1, setSelectedMovie1] = useState<string>("");
   const [selectedMovie2, setSelectedMovie2] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [tagline, setTagline] = useState<string>("");
+  const [plot, setPlot] = useState<string>("");
+  const [imageKey, setImageKey] = useState<string>("");
+  const [imageDescription, setImageDescription] = useState<string>("");
   const [audioKey, setAudioKey] = useState<string>("");
-  useEffect(() => {
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<MessageLog[]>([]);
+
+  // Function to reset all mashup state
+  const resetMashup = () => {
     setTitle("");
     setTagline("");
     setPlot("");
     setImageKey("");
     setImageDescription("");
     setAudioKey("");
-    const fetchMovies = async () => {
-      const movies = await getMovies();
-      setMovies(movies);
-    };
-    fetchMovies();
-  }, []);
+    setError(null);
+  };
 
   const agent = useAgent({
     agent: "mashup-agent",
     onMessage: (message) => {
-      console.log("Message received:", message.data);
-      setMessages((prev) => [...prev, message.data]);
+      // Log the raw message for debugging
+      console.log("Raw message received:", message.data);
+
+      try {
+        // Skip empty messages
+        if (!message.data) {
+          console.warn("Empty message received");
+          return;
+        }
+
+        // Try to parse the message
+        let data: MessageData;
+        try {
+          data = JSON.parse(message.data);
+        } catch (parseError) {
+          const error = parseError as Error;
+          console.error("Failed to parse message:", message.data);
+          console.error("Parse error:", error);
+          setError(`Failed to parse message: ${error.message}`);
+          return;
+        }
+
+        // Validate the parsed data
+        if (!data || typeof data !== "object") {
+          console.warn("Invalid message format received:", data);
+          return;
+        }
+
+        // Update messages state with the raw data for debugging
+        setMessages((prev) => [...prev, { raw: message.data, parsed: data }]);
+
+        // Process valid data fields
+        if (data.title) setTitle((prev) => prev + data.title);
+        if (data.tagline) setTagline((prev) => prev + data.tagline);
+        if (data.plot) setPlot((prev) => prev + data.plot);
+        if (data.imageKey) setImageKey(data.imageKey);
+        if (data.imageDescription)
+          setImageDescription((prev) => prev + data.imageDescription);
+        if (data.audioKey) setAudioKey(data.audioKey);
+      } catch (error) {
+        const e = error as Error;
+        console.error("Error processing message:", e);
+        setError(`Error processing message: ${e.message}`);
+      }
     },
-    onStateUpdate: (state: {
-      title: string;
-      tagline: string;
-      plot: string;
-      imageKey: string;
-      imageDescription: string;
-      audioKey: string;
-    }) => {
-      setTitle(state.title);
-      setTagline(state.tagline);
-      setPlot(state.plot);
-      setImageKey(state.imageKey);
-      setImageDescription(state.imageDescription);
-      setAudioKey(state.audioKey);
+    onError: (error) => {
+      console.error("WebSocket error:", error);
+      setError("Connection error. Please try again.");
+      setIsGenerating(false);
+    },
+    onClose: () => {
+      console.log("WebSocket connection closed");
+      setIsGenerating(false);
     },
   });
 
-  const handleMashup = async () => {
-    setIsLoading(true);
-    await agent.call("pickMovies", [selectedMovie1, selectedMovie2]);
-    setIsLoading(false);
+  const handleGenerateMashup = async () => {
+    if (!agent.id || !selectedMovie1 || !selectedMovie2) return;
+
+    setIsGenerating(true);
+    setError(null);
+    // clear the state
+    resetMashup();
+
+    agent.send(
+      JSON.stringify({
+        movie1: selectedMovie1,
+        movie2: selectedMovie2,
+      }),
+    );
   };
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
-      <p className="text-gray-700 mb-2">
-        Name: <span className="font-medium">{agent.name}</span>
-      </p>
-
-      <div className="bg-white p-4 rounded-md shadow mb-6">
-        <div className="flex flex-col gap-4">
-          <select
-            className="mb-4 p-2 border border-gray-300 rounded-md"
-            onChange={(e) => setSelectedMovie1(e.target.value)}
-          >
-            <option value="">Select Movie 1</option>
-            {movies.map((movie) => (
-              <option
-                key={movie.id}
-                value={movie.id}
-                className="flex items-center"
-              >
-                {movie.title}
-              </option>
-            ))}
-          </select>
-          <select
-            className="mb-4 p-2 border border-gray-300 rounded-md"
-            onChange={(e) => setSelectedMovie2(e.target.value)}
-          >
-            <option value="">Select Movie 2</option>
-            {movies.map((movie) => (
-              <option key={movie.id} value={movie.id}>
-                {movie.title}
-              </option>
-            ))}
-          </select>
-          <div className="flex flex-row gap-4">
+    <div className="flex flex-col min-h-screen p-4">
+      <div className="w-full max-w-4xl space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Select Movies</h2>
+            <div className="space-y-4">
+              <MovieSelector
+                label="First Movie"
+                selectedMovie={selectedMovie1}
+                onSelect={setSelectedMovie1}
+              />
+              <MovieSelector
+                label="Second Movie"
+                selectedMovie={selectedMovie2}
+                onSelect={setSelectedMovie2}
+              />
+            </div>
             <button
-              onClick={async () => {
-                await handleMashup();
-              }}
-              disabled={isLoading}
-              className="mb-6 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+              onClick={handleGenerateMashup}
+              disabled={!selectedMovie1 || !selectedMovie2 || isGenerating}
+              className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Mashup!
-            </button>
-
-            <button
-              className="mb-6 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
-              disabled={isLoading}
-              onClick={() => {
-                // clear the state
-                setTitle("");
-                setTagline("");
-                setPlot("");
-                setImageKey("");
-                setImageDescription("");
-                setAudioKey("");
-              }}
-            >
-              Clear State
+              {isGenerating ? "Creating Mashup..." : "Create New Mashup"}
             </button>
           </div>
+          <div className="md:col-span-2">
+            <h2 className="text-2xl font-semibold mb-4">Mashup Details</h2>
+            <div className="space-y-4">
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Title:</span> {title}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Tagline:</span> {tagline}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Plot:</span> {plot}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Poster Description:</span>{" "}
+                {imageDescription}
+              </p>
+              {imageKey ? (
+                <div className="mt-4">
+                  <img
+                    src={`/api/poster/${imageKey}`}
+                    alt={imageDescription}
+                    className="max-w-full h-auto rounded-lg shadow-md"
+                  />
+                </div>
+              ) : (
+                <p className="text-gray-700 mb-2">
+                  <span className="font-semibold">Poster:</span> No poster yet
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        {audioKey && audioKey !== "" && (
+        {audioKey && audioKey !== "" ? (
           <div className="my-4">
             <audio src={`/api/audio/${audioKey}`} controls className="w-full" />
           </div>
-        )}
-        <p className="text-gray-700 mb-2">
-          <span className="font-semibold">Title:</span> {title}
-        </p>
-        <p className="text-gray-700 mb-2">
-          <span className="font-semibold">Tagline:</span> {tagline}
-        </p>
-        <p className="text-gray-700 mb-2">
-          <span className="font-semibold">Plot:</span> {plot}
-        </p>
-        <p className="text-gray-700 mb-2">
-          <span className="font-semibold">Poster Description:</span>{" "}
-          {imageDescription}
-        </p>
-        {imageKey != "" && (
-          <p className="text-gray-700">
-            <span className="font-semibold">Poster:</span>
-            <img
-              src={`/api/poster/${imageKey}`}
-              alt="Mashup Poster"
-              className="w-full h-auto"
-            />
+        ) : (
+          <p className="text-gray-700 mb-2">
+            <span className="font-semibold">Audio:</span> No audio yet
           </p>
         )}
       </div>
-
-      <h3 className="text-xl font-semibold text-neutral-800 mb-3">Messages</h3>
-      <ul className="bg-white rounded-md shadow divide-y divide-gray-100">
-        {messages.map((message, index) => (
-          <li key={index} className="px-4 py-3 text-gray-700">
-            {message}
-          </li>
-        ))}
-        {messages.length === 0 && (
-          <li className="px-4 py-3 text-gray-500 italic">No messages yet</li>
-        )}
-      </ul>
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Messages</h2>
+        <div className="space-y-4">
+          {messages.map((message, index) => (
+            <p key={index} className="text-gray-700">
+              {JSON.stringify(message)}
+            </p>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

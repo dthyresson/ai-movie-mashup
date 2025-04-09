@@ -53,6 +53,9 @@ importers:
       workers-ai-provider:
         specifier: ^0.3.0
         version: 0.3.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
     devDependencies:
       '@types/node':
         specifier: ^22.13.11
