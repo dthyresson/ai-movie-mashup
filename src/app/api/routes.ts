@@ -64,6 +64,22 @@ export const apiRoutes = [
       },
     });
   }),
+  // Get the poster by the key and return the poster image
+  route("/poster/:key", async ({ params }: RequestInfo<{ key: string }>) => {
+    const key = params.key;
+    const image = await env.R2.get(key);
+    if (!image) {
+      return new Response(null, {
+        status: 404,
+      });
+    }
+    return new Response(image.body, {
+      headers: {
+        "Content-Type": "image/jpeg",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  }),
   // Get the poster for a mashup by id and return the poster image
   route(
     "/mashups/:id/poster",
@@ -97,6 +113,24 @@ export const apiRoutes = [
       });
     },
   ),
+  // Get audio by key and return the audio file
+  route("/audio/:key", async ({ params }: RequestInfo<{ key: string }>) => {
+    const key = params.key;
+    const audio = await env.R2.get(key);
+
+    if (!audio) {
+      return new Response(null, {
+        status: 404,
+      });
+    }
+
+    return new Response(audio.body, {
+      headers: {
+        "Content-Type": "audio/mp3",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  }),
   // Get the audio for a mashup by id and return the audio file
   route(
     "/mashups/:id/audio",

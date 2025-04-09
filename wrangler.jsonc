@@ -7,9 +7,7 @@
   "main": "src/worker.tsx",
   // Compatibility settings
   "compatibility_date": "2024-09-23",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   // AI configuration
   "ai": {
     "binding": "AI"
@@ -30,8 +28,8 @@
         "class_name": "SessionDurableObject"
       },
       {
-        "name": "MY_AGENT",
-        "class_name": "MyAgent",
+        "name": "MASHUP_AGENT",
+        "class_name": "MashupAgent"
         // "script_name": "src/app/agents/MyAgent.ts"
       }
     ]
@@ -65,10 +63,7 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": [
-        "SessionDurableObject",
-        "MyAgent"
-      ]
+      "new_sqlite_classes": ["SessionDurableObject", "MashupAgent"]
     }
   ],
   // D1 database configuration

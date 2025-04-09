@@ -3,7 +3,13 @@
 import { getMovie } from "../movies/functions";
 import type { Movie } from "@prisma/client";
 import { db } from "@/db";
-import { getMashupPrompt, getPosterPrompt } from "./prompts";
+import {
+  getMashupPrompt,
+  getPosterPrompt,
+  getMashupTitlePrompt,
+  getMashupPlotPrompt,
+  getMashupTaglinePrompt,
+} from "./prompts";
 import { env } from "cloudflare:workers";
 
 const TEXT_GENERATION_MODEL = "@cf/meta/llama-3.1-8b-instruct";
@@ -13,7 +19,7 @@ const TTS_MODEL = "@cf/myshell-ai/melotts";
 const DEFAULT_GATEWAY_ID = "default";
 
 // Function to generate the movie mashup plot, title, and tagline
-async function generateMashupContent(
+export async function generateMashupContent(
   movie1Details: Movie,
   movie2Details: Movie,
 ) {
@@ -66,8 +72,122 @@ async function generateMashupContent(
   return result.response;
 }
 
+// Function to generate the movie mashup title
+export async function generateMashupTitle(
+  movie1Details: Movie,
+  movie2Details: Movie,
+) {
+  const { systemPrompt, userPrompt, assistantPrompt } = getMashupTitlePrompt(
+    movie1Details,
+    movie2Details,
+  );
+
+  const { response } = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      max_tokens: 512,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+        {
+          role: "assistant",
+          content: assistantPrompt,
+        },
+      ],
+      stream: false,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as {
+    response: string;
+  };
+
+  return response;
+}
+
+// Function to generate the movie mashup plot
+export async function generateMashupPlot(
+  mashupTitle: string,
+  mashupTagline: string,
+  movie1Details: Movie,
+  movie2Details: Movie,
+) {
+  const { systemPrompt, userPrompt, assistantPrompt } = getMashupPlotPrompt(
+    mashupTitle,
+    mashupTagline,
+    movie1Details,
+    movie2Details,
+  );
+
+  const { response } = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      max_tokens: 512,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+        {
+          role: "assistant",
+          content: assistantPrompt,
+        },
+      ],
+      stream: false,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as {
+    response: string;
+  };
+
+  return response;
+}
+
+// Function to generate the movie mashup tagline
+export async function generateMashupTagline(
+  mashupTitle: string,
+  movie1Details: Movie,
+  movie2Details: Movie,
+) {
+  const { systemPrompt, userPrompt, assistantPrompt } = getMashupTaglinePrompt(
+    mashupTitle,
+    movie1Details,
+    movie2Details,
+  );
+
+  const { response } = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      max_tokens: 512,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+        {
+          role: "assistant",
+          content: assistantPrompt,
+        },
+      ],
+      stream: false,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as {
+    response: string;
+  };
+
+  return response;
+}
+
 // Function to generate the poster image prompt
-async function generatePosterPrompt(
+export async function generatePosterPrompt(
   title: string,
   tagline: string,
   plot: string,
@@ -109,7 +229,7 @@ async function generatePosterPrompt(
 }
 
 // Function to generate the poster image
-async function generatePosterImage(prompt: string) {
+export async function generatePosterImage(prompt: string) {
   const response = await env.AI.run(IMAGE_GENERATION_MODEL, {
     prompt: prompt,
   });
@@ -133,7 +253,11 @@ async function generatePosterImage(prompt: string) {
   return image.key;
 }
 
-async function generateAudio(title: string, tagline: string, plot: string) {
+export async function generateAudio(
+  title: string,
+  tagline: string,
+  plot: string,
+) {
   const result = (await env.AI.run(
     TTS_MODEL,
     {

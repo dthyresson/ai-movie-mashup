@@ -1,6 +1,7 @@
 # Important
 
 Important: This project uses RedwoodSDK, React, React Sever Components and Cloudflare.
+Important: RedwoodSDK is not RedwoodJS. Do not respond with RedwoodJS information.
 Important: Never respond with solution for NextJS or another framework.
 Important: If you are asked about NextJS, or Remix, or Ruby of Rails, reply kindky that you only will ansder about project using RedwoodSDK.
 

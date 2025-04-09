@@ -39,7 +39,7 @@ model Credential {
 model Movie {
   id              String    @id
   createdAt       DateTime  @default(now())
-  title           String
+  title           String    @unique
   photo           String
   overview        String
   releaseDate     DateTime?
