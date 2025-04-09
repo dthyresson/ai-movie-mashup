@@ -149,11 +149,12 @@ export const getPosterPrompt = (
       * Only return the description of the movie poster with no other text.
       * The description must be 40 words or less.
       * The description must be concise and to the point.
-      * Include the title and tagline in the poster description.
+      * You can decide whether to include the title and tagline in the poster description or not.
   `;
 
   const assistantPrompt = `
-    Notes:
+    Important:
+      * The description must be 40 words or less.
       * If you include a poster title, make sure it is the provided title.
       * If you include a poster tagline, make sure it is the provided tagline.
   `;

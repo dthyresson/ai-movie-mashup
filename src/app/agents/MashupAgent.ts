@@ -181,7 +181,7 @@ export class MashupAgent extends Agent<Env> {
     const imageKey = await generatePosterImage(imageDescription);
 
     connection.send(JSON.stringify({ imageKey }));
-    return { imageKey, imageDescription: imageDescription };
+    return { imageKey, imageDescription };
   }
 
   // Helper function to generate audio
