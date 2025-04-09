@@ -71,8 +71,13 @@ export default function MashupAgentClient() {
             className="mb-4 p-2 border border-gray-300 rounded-md"
             onChange={(e) => setSelectedMovie1(e.target.value)}
           >
+            <option value="">Select Movie 1</option>
             {movies.map((movie) => (
-              <option key={movie.id} value={movie.id}>
+              <option
+                key={movie.id}
+                value={movie.id}
+                className="flex items-center"
+              >
                 {movie.title}
               </option>
             ))}
@@ -81,6 +86,7 @@ export default function MashupAgentClient() {
             className="mb-4 p-2 border border-gray-300 rounded-md"
             onChange={(e) => setSelectedMovie2(e.target.value)}
           >
+            <option value="">Select Movie 2</option>
             {movies.map((movie) => (
               <option key={movie.id} value={movie.id}>
                 {movie.title}

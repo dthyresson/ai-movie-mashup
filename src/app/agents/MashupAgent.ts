@@ -9,7 +9,7 @@ import {
   // generatePosterPrompt
   generateAudio,
 } from "@/app/pages/mashups/functions";
-import type { Mashup } from "@prisma/client";
+import type { Mashup, Movie } from "@prisma/client";
 import { createWorkersAI } from "workers-ai-provider";
 import { streamText } from "ai";
 import { env } from "cloudflare:workers";
@@ -116,6 +116,105 @@ export class MashupAgent extends Agent<Env, State> {
   //   this.setState({ ...this.state, lastUpdated: new Date() });
   // }
 
+  // Helper function to find a movie by ID
+  private async findMovie(movieId: string): Promise<Movie | null> {
+    return await db.movie.findUnique({
+      where: {
+        id: movieId,
+      },
+    });
+  }
+
+  // Helper function to stream text and update state
+  private async streamTextAndUpdateState(
+    model: any,
+    systemPrompt: string,
+    userPrompt: string,
+    assistantPrompt: string,
+    stateKey: keyof State,
+    initialValue: string = "",
+    maxTokens?: number,
+  ): Promise<string> {
+    let result = initialValue;
+
+    this.setState({
+      ...this.state,
+      [stateKey]: result,
+    });
+
+    const { textStream } = streamText({
+      model,
+      maxTokens,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+        { role: "assistant", content: assistantPrompt },
+      ],
+    });
+
+    for await (const delta of textStream) {
+      result += delta;
+      this.setState({
+        ...this.state,
+        [stateKey]: result,
+      });
+    }
+
+    return result;
+  }
+
+  // Helper function to generate poster image
+  private async generatePoster(
+    model: any,
+    title: string,
+    tagline: string,
+    plot: string,
+  ): Promise<{ imageKey: string; imageDescription: string }> {
+    // Generate poster description
+    const {
+      systemPrompt: posterSystemPrompt,
+      userPrompt: posterUserPrompt,
+      assistantPrompt: posterAssistantPrompt,
+    } = getPosterPrompt(title, tagline, plot);
+
+    const posterDescription = await this.streamTextAndUpdateState(
+      model,
+      posterSystemPrompt,
+      posterUserPrompt,
+      posterAssistantPrompt,
+      "imageDescription",
+      "",
+      512,
+    );
+
+    // Generate the poster image
+    const imageKey = await generatePosterImage(posterDescription);
+
+    this.setState({
+      ...this.state,
+      imageKey,
+      imageDescription: posterDescription,
+    });
+
+    return { imageKey, imageDescription: posterDescription };
+  }
+
+  // Helper function to generate audio
+  private async generateAudioContent(
+    title: string,
+    tagline: string,
+    plot: string,
+  ): Promise<string> {
+    const audioKey = await generateAudio(title, tagline, plot);
+
+    this.setState({
+      ...this.state,
+      audioKey,
+    });
+
+    return audioKey;
+  }
+
   // @ts-ignore
   @callable()
   async pickMovies(movie1: string, movie2: string) {
@@ -126,17 +225,9 @@ export class MashupAgent extends Agent<Env, State> {
       safePrompt: true,
     });
 
-    const movie1Data = await db.movie.findUnique({
-      where: {
-        id: movie1,
-      },
-    });
-
-    const movie2Data = await db.movie.findUnique({
-      where: {
-        id: movie2,
-      },
-    });
+    // Find both movies
+    const movie1Data = await this.findMovie(movie1);
+    const movie2Data = await this.findMovie(movie2);
 
     // If both movies are found, generate the mashup content
     if (movie1Data && movie2Data) {
@@ -155,163 +246,60 @@ export class MashupAgent extends Agent<Env, State> {
         audioKey: "",
       });
 
+      // Generate title
       const {
         systemPrompt: titleSystemPrompt,
         userPrompt: titleUserPrompt,
         assistantPrompt: titleAssistantPrompt,
       } = getMashupTitlePrompt(movie1Data, movie2Data);
 
-      this.setState({
-        ...this.state,
-        title: title,
-        tagline: "Writing a tagline...",
-      });
-
-      const { textStream: titleStream } = streamText({
+      title = await this.streamTextAndUpdateState(
         model,
-        messages: [
-          { role: "system", content: titleSystemPrompt },
-          { role: "user", content: titleUserPrompt },
-          {
-            role: "assistant",
-            content: titleAssistantPrompt,
-          },
-        ],
-      });
+        titleSystemPrompt,
+        titleUserPrompt,
+        titleAssistantPrompt,
+        "title",
+        "",
+      );
 
-      title = "";
-
-      for await (const delta of titleStream) {
-        title += delta;
-        this.setState({
-          ...this.state,
-          title,
-        });
-      }
-
-      let tagline = "Writing a tagline...";
-
+      // Generate tagline
       const {
         systemPrompt: taglineSystemPrompt,
         userPrompt: taglineUserPrompt,
         assistantPrompt: taglineAssistantPrompt,
       } = getMashupTaglinePrompt(title, movie1Data, movie2Data);
 
-      tagline = "";
-      const { textStream: taglineStream } = streamText({
+      const tagline = await this.streamTextAndUpdateState(
         model,
-        maxTokens: 512,
-        messages: [
-          { role: "system", content: taglineSystemPrompt },
-          { role: "user", content: taglineUserPrompt },
-          {
-            role: "assistant",
-            content: taglineAssistantPrompt,
-          },
-        ],
-      });
+        taglineSystemPrompt,
+        taglineUserPrompt,
+        taglineAssistantPrompt,
+        "tagline",
+        "",
+        512,
+      );
 
-      for await (const delta of taglineStream) {
-        tagline += delta;
-        this.setState({
-          ...this.state,
-          tagline,
-        });
-      }
-
-      let plot = "I'm screenwriting ...";
-
-      this.setState({
-        ...this.state,
-        tagline: tagline,
-        plot,
-      });
-
+      // Generate plot
       const {
         systemPrompt: plotSystemPrompt,
         userPrompt: plotUserPrompt,
         assistantPrompt: plotAssistantPrompt,
       } = getMashupPlotPrompt(title, tagline, movie1Data, movie2Data);
 
-      const { textStream: plotStream } = streamText({
+      const plot = await this.streamTextAndUpdateState(
         model,
-        messages: [
-          { role: "system", content: plotSystemPrompt },
-          { role: "user", content: plotUserPrompt },
-          {
-            role: "assistant",
-            content: plotAssistantPrompt,
-          },
-        ],
-      });
+        plotSystemPrompt,
+        plotUserPrompt,
+        plotAssistantPrompt,
+        "plot",
+        "",
+      );
 
-      plot = "";
+      // Generate poster
+      await this.generatePoster(model, title, tagline, plot);
 
-      for await (const delta of plotStream) {
-        plot += delta;
-        this.setState({
-          ...this.state,
-          plot,
-        });
-      }
-
-      this.setState({
-        ...this.state,
-        imageDescription: "Designing a poster...",
-        imageKey: "",
-      });
-
-      // Generate the poster image prompt
-      const {
-        systemPrompt: posterSystemPrompt,
-        userPrompt: posterUserPrompt,
-        assistantPrompt: posterAssistantPrompt,
-      } = getPosterPrompt(title, tagline, plot);
-
-      let posterDescription = "";
-
-      const { textStream: posterStream } = streamText({
-        model,
-        maxTokens: 512,
-        messages: [
-          { role: "system", content: posterSystemPrompt },
-          { role: "user", content: posterUserPrompt },
-          {
-            role: "assistant",
-            content: posterAssistantPrompt,
-          },
-        ],
-      });
-
-      for await (const delta of posterStream) {
-        posterDescription += delta;
-        this.setState({
-          ...this.state,
-          imageDescription: posterDescription,
-        });
-      }
-
-      this.setState({
-        ...this.state,
-        imageDescription: posterDescription,
-        imageKey: "",
-      });
-
-      // Generate the poster image
-      const imageKey = await generatePosterImage(posterDescription);
-
-      this.setState({
-        ...this.state,
-        imageKey,
-        imageDescription: posterDescription,
-      });
-
-      const audioKey = await generateAudio(title, tagline, plot);
-
-      this.setState({
-        ...this.state,
-        audioKey,
-      });
+      // Generate audio
+      await this.generateAudioContent(title, tagline, plot);
     }
 
     return `picked movies: ${movie1} and ${movie2}`;
