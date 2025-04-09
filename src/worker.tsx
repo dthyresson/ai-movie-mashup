@@ -14,8 +14,10 @@ import type { User } from "@prisma/client";
 import { apiRoutes } from "./app/api/routes";
 import { mashupRoutes } from "./app/pages/mashups/routes";
 import { mashupMovies } from "./app/pages/mashups/functions";
+import { agentRoutes } from "./app/agents/routes";
 
 export { SessionDurableObject } from "./session/durableObject";
+export { MyAgent } from "./app/agents/MyAgent";
 
 export type AppContext = {
   session: Session | null;
@@ -68,6 +70,7 @@ const app = defineApp([
     ]),
     prefix("/user", userRoutes),
     prefix("/api", apiRoutes),
+    prefix("/agents", agentRoutes),
     route(
       "/mashups/:id/audio",
       async ({ params }: RequestInfo<{ id: string }>) => {

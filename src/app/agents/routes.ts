@@ -2,23 +2,27 @@ import { route } from "@redwoodjs/sdk/router";
 import { Agent, getAgentByName, AgentNamespace } from "agents";
 import { MyAgent } from "./MyAgent";
 import { env } from "cloudflare:workers";
-
-interface Env {
-  // Define your Agent on the environment here
-  // Passing your Agent class as a TypeScript type parameter allows you to call
-  // methods defined on your Agent.
-  MyAgent: AgentNamespace<MyAgent>;
-}
+import { RequestInfo } from "@redwoodjs/sdk/worker";
+import MyAgentPage from "@/app/pages/agents/MyAgentPage";
 
 export const agentRoutes = [
-  route("/my", () => {
-    const agent = getAgentByName<Env, MyAgent>(
-      env.MyAgent,
+  route("/my", MyAgentPage),
+  route("/test", async ({ request }: RequestInfo) => {
+    const agent = await getAgentByName<Env, MyAgent>(
+      env.MY_AGENT,
       "my-unique-agent-id",
     );
     if (!agent) {
       return new Response("Agent not found", { status: 404 });
     }
-    return agent.onRequest(request);
+
+    console.log("MyAgent agent", agent);
+
+    const response = await agent.onRequest(request);
+
+    return new Response(response.body, {
+      status: response.status,
+      headers: response.headers,
+    });
   }),
 ];
