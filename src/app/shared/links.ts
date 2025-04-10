@@ -9,4 +9,5 @@ export const link = defineLinks([
   "/agents/mashup",
   "/agents/mashup/:firstMovieId",
   "/agents/mashup/:firstMovieId/:secondMovieId",
+  "/api/random-mashup",
 ]);

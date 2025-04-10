@@ -2,6 +2,8 @@ import { route } from "@redwoodjs/sdk/router";
 import { RequestInfo } from "@redwoodjs/sdk/worker";
 import { db } from "@/db";
 import { env } from "cloudflare:workers";
+import { getTwoRandomMovies } from "@/app/pages/movies/functions";
+
 export const apiRoutes = [
   // Create a new mashup, but in a pending state before the job is queued
   // The queue job will update the mashup with the final details. See the worker.
@@ -178,4 +180,18 @@ export const apiRoutes = [
       });
     },
   ),
+  route("/random-mashup", async () => {
+    const { movie1, movie2 } = await getTwoRandomMovies();
+
+    if (!movie1 || !movie2) {
+      return new Response("Could not find random movies", { status: 404 });
+    }
+
+    return new Response(null, {
+      status: 302, // Redirect
+      headers: {
+        Location: `/agents/mashup/${movie1.id}/${movie2.id}`,
+      },
+    });
+  }),
 ];

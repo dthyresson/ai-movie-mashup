@@ -1,6 +1,6 @@
 "use server";
 
-import { useState } from 'react';
+import { link } from "@/app/shared/links";
 
 interface PresetMashup {
     id: string;
@@ -58,12 +58,21 @@ export const PresetMashups = () => {
                 {PRESET_MASHUPS.map((preset) => (
                     <a
                         key={preset.id}
-                        href={`/agents/mashup/${preset.movie1.id}/${preset.movie2.id}`}
+                        href={link(`/agents/mashup/:firstMovieId/:secondMovieId`, {
+                            firstMovieId: preset.movie1.id,
+                            secondMovieId: preset.movie2.id
+                        })}
                         className="text-purple-600 hover:text-purple-800 bg-purple-100 px-4 py-2 rounded-full text-sm font-medium transition-colors"
                     >
                         {preset.movie1.title} + {preset.movie2.title}
                     </a>
                 ))}
+                <a
+                    href={link('/api/random-mashup')}
+                    className="text-green-600 hover:text-green-800 bg-green-100 px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                >
+                    I'm Feeling Lucky!
+                </a>
             </div>
         </div>
     );
