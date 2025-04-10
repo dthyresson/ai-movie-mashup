@@ -5,6 +5,8 @@ import { env } from "cloudflare:workers";
 export const apiRoutes = [
   // Create a new mashup, but in a pending state before the job is queued
   // The queue job will update the mashup with the final details. See the worker.
+  // Also, yes this is an open route, but this app is just an experiment
+  // and I'm not worried about it yet
   route(
     "/mashup/:firstMovieId/:secondMovieId",
     async ({
@@ -65,6 +67,9 @@ export const apiRoutes = [
     });
   }),
   // Get the poster by the key and return the poster image
+  // Yeah, this is an open fetch into your R2 bucket
+  // but this app is just an experiment and I'm not worried about it yet
+  // since not deploying
   route("/poster/:key", async ({ params }: RequestInfo<{ key: string }>) => {
     const key = params.key;
     const image = await env.R2.get(key);
@@ -114,6 +119,9 @@ export const apiRoutes = [
     },
   ),
   // Get audio by key and return the audio file
+  // Yeah, this is an open fetch into your R2 bucket
+  // but this app is just an experiment and I'm not worried about it yet
+  // since not deploying
   route("/audio/:key", async ({ params }: RequestInfo<{ key: string }>) => {
     const key = params.key;
     const audio = await env.R2.get(key);

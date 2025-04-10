@@ -31,8 +31,6 @@ export async function generatePoster(
     512,
   );
 
-  connection.send(JSON.stringify({ imageDescription }));
-
   // Generate the poster image
   const imageKey = await generatePosterImage(imageDescription);
 

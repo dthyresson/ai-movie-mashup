@@ -604,4 +604,28 @@ export const MOVIES = [
     photo: "/l9NDh3IYPAmSYjqMcxPfUh83Xwm.jpg",
     releaseDate: "1984-08-15T00:00:00.000Z",
   },
+  {
+    id: "865-the-running-man",
+    title: "The Running Man",
+    overview:
+      "By 2017, the global economy has collapsed and U.S. society has become a totalitarian police state, censoring all cultural activity. The government pacifies the populace by broadcasting a number of game shows in which convicted criminals fight for their lives, including the gladiator-style The Running Man, hosted by the ruthless Damon Killian, where “runners” attempt to evade “stalkers” and certain death for a chance to be pardoned and set free.",
+    photo: "/GTAUOhO4BN0peJVvxGEQydJvUO.jpg",
+    releaseDate: "1987-11-13T00:00:00.000Z",
+  },
+  {
+    id: "95-armageddon",
+    title: "Armageddon",
+    overview:
+      "When an asteroid threatens to collide with Earth, NASA honcho Dan Truman determines the only way to stop it is to drill into its surface and detonate a nuclear bomb. This leads him to renowned driller Harry Stamper, who agrees to helm the dangerous space mission provided he can bring along his own hotshot crew. Among them is the cocksure A.J. who Harry thinks isn't good enough for his daughter, until the mission proves otherwise.",
+    photo: "/eTM3qtGhDU8cvjpoa6KEt5E2auU.jpg",
+    releaseDate: "1998-07-01T00:00:00.000Z",
+  },
+  {
+    id: "8656-deep-impact",
+    title: "Deep Impact",
+    overview:
+      "A seven-mile-wide space rock is hurtling toward Earth, threatening to obliterate the planet. Now, it's up to the president of the United States to save the world. He appoints a tough-as-nails veteran astronaut to lead a joint American-Russian crew into space to destroy the comet before impact. Meanwhile, an enterprising reporter uses her smarts to uncover the scoop of the century.",
+    photo: "/a3vQS7JKqlOb3MdVJHuTCP9s7Mg.jpg",
+    releaseDate: "1998-05-08T00:00:00.000Z",
+  },
 ];
