@@ -240,7 +240,7 @@ export async function generatePosterImage(prompt: string) {
   const response = await env.AI.run(
     IMAGE_GENERATION_MODEL,
     {
-      prompt: prompt,
+      prompt: `${prompt}.`,
     },
     {
       gateway: {

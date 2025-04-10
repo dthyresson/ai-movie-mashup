@@ -142,19 +142,18 @@ export const getPosterPrompt = (
   const systemPrompt = `
     You are a movie art director and cinematographer.
     You are given a movie title, tagline, and plot.
-     You are to describe a movie poster for the movie.
-     The description should be a complelling and cinematic image that captures the genre of the movie.
+    You are to describe a movie poster for the movie.
+    The description should be a complelling and cinematic image that captures the genre of the movie.
 
-     Important:
+    Important:
+      * The description cannot contain violence, gore, or any other content that is not suitable for a movie poster.
       * Only return the description of the movie poster with no other text.
-      * The description must be 40 words or less.
-      * The description must be concise and to the point.
-      * You can decide whether to include the title and tagline in the poster description or not.
+      * The description must be 40 words or less, concise but creative.
+      * Include the title and tagline in the poster description if you think it is appropriate.
   `;
 
   const assistantPrompt = `
     Important:
-      * The description must be 40 words or less.
       * If you include a poster title, make sure it is the provided title.
       * If you include a poster tagline, make sure it is the provided tagline.
   `;
