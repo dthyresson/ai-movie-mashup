@@ -81,7 +81,7 @@ export class MashupAgent extends Agent<Env> {
       }
     } catch (error) {
       console.error("Error parsing message:", error);
-      connection.send("Error: Invalid JSON format");
+      // connection.send("Error: Invalid JSON format");
     }
   }
 
