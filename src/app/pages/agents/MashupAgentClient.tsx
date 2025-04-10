@@ -124,10 +124,10 @@ export default function MashupAgentClient() {
 
   return (
     <div className="flex flex-col min-h-screen p-4">
-      <div className="w-full mx-auto space-y-8">
-        <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
+      <div className="w-full max-w-5xl mx-auto space-y-4">
+        <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
               <MovieSelector
                 label="First Movie"
                 selectedMovie={selectedMovie1}
@@ -141,7 +141,7 @@ export default function MashupAgentClient() {
                 otherSelectedMovie={selectedMovie1}
               />
             </div>
-            <div className="flex flex-col justify-center items-center">
+            <div className="w-full lg:w-auto flex justify-center lg:justify-end">
               <GenerateButton
                 isLoading={isGenerating}
                 onClick={handleGenerateMashup}

@@ -72,5 +72,13 @@
       "database_name": "__change_me__",
       "database_id": "__change_me__"
     }
+  ],
+  // Workflows configuration
+  "workflows": [
+    {
+      "name": "mashup-workflow",
+      "binding": "MASHUP_WORKFLOW",
+      "class_name": "MashupWorkflow"
+    }
   ]
 }

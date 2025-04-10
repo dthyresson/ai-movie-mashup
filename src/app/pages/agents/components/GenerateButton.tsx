@@ -21,12 +21,12 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
       {isLoading ? (
         <>
           <LoadingSpinnerIcon />
-          Generating...
+          Mash
         </>
       ) : (
         <>
           <CreateIcon />
-          Generate Mashup
+          Mash
         </>
       )}
     </button>
