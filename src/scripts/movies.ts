@@ -628,4 +628,20 @@ export const MOVIES = [
     photo: "/a3vQS7JKqlOb3MdVJHuTCP9s7Mg.jpg",
     releaseDate: "1998-05-08T00:00:00.000Z",
   },
+  {
+    id: "251-ghost",
+    title: "Ghost",
+    overview:
+      "Sam Wheat is a banker, Molly Jensen is an artist, and the two are madly in love. However, when Sam is murdered by his friend and corrupt business partner Carl Bruner over a shady business deal, he is left to roam the earth as a powerless spirit. When he learns of Carl's betrayal, Sam must seek the help of psychic Oda Mae Brown to set things right and protect Molly from Carl and his goons.",
+    photo: "/yap1VxnhetYhzkAbxTxrUPztSbQ.jpg",
+    releaseDate: "1990-07-12T00:00:00.000Z",
+  },
+  {
+    id: "982-the-manchurian-candidate",
+    title: "The Manchurian Candidate",
+    overview:
+      "Near the end of the Korean War, a platoon of U.S. soldiers is captured by communists and brainwashed. Following the war, the platoon is returned home, and Sergeant Raymond Shaw is lauded as a hero by the rest of his platoon. However, the platoon commander, Captain Bennett Marco, finds himself plagued by strange nightmares and soon races to uncover a terrible plot.",
+    photo: "/h0mkK00GjBCJoBYm3yvPdkzlIyV.jpg",
+    releaseDate: "1962-10-24T00:00:00.000Z",
+  },
 ];
