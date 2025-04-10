@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Agent, unstable_callable as callable } from "agents";
 import type { Connection, ConnectionContext } from "agents";
 
-import { pickMovies } from "./functions/index";
+import { mashupMovies } from "./functions/index";
 
 // The core class for creating Agents that can maintain state, orchestrate
 // complex AI workflows, schedule tasks, and interact with users and other
@@ -44,7 +44,7 @@ export class MashupAgent extends Agent<Env> {
           `Selected movies: ${parsedMessage.movie1} and ${parsedMessage.movie2}`,
         );
 
-        await pickMovies(
+        await mashupMovies(
           connection,
           parsedMessage.movie1,
           parsedMessage.movie2,

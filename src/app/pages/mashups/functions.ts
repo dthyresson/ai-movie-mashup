@@ -126,27 +126,6 @@ export async function generateMashupPlot(
     movie2Details,
   );
 
-  // const response = await env.AI.run(
-  //   TEXT_GENERATION_MODEL,
-  //   {
-  //     max_tokens: 512,
-  //     messages: [
-  //       { role: "system", content: systemPrompt },
-  //       { role: "user", content: userPrompt },
-  //       {
-  //         role: "assistant",
-  //         content: assistantPrompt,
-  //       },
-  //     ],
-  //     stream: true,
-  //   },
-  //   {
-  //     gateway: {
-  //       id: DEFAULT_GATEWAY_ID,
-  //     },
-  //   },
-  // );
-
   const workersai = createWorkersAI({ binding: env.AI });
   const model = workersai("@cf/meta/llama-3.1-8b-instruct", {
     safePrompt: true,
@@ -256,9 +235,17 @@ export async function generatePosterPrompt(
 
 // Function to generate the poster image
 export async function generatePosterImage(prompt: string) {
-  const response = await env.AI.run(IMAGE_GENERATION_MODEL, {
-    prompt: prompt,
-  });
+  const response = await env.AI.run(
+    IMAGE_GENERATION_MODEL,
+    {
+      prompt: prompt,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  );
 
   // Convert base64 string to a Blob/File for R2 storage
   const base64Data = response.image || "";

@@ -159,14 +159,19 @@ const createMashupInDb = async (
 /**
  * Function to pick movies and generate mashup content
  */
-export async function pickMovies(
+export const mashupMovies = async (
   connection: Connection,
   movie1: string,
   movie2: string,
-) {
-  console.log("Picking movies:", movie1, movie2);
+) => {
+  console.log("Mashing movies:", movie1, movie2);
 
-  const workersai = createWorkersAI({ binding: env.AI });
+  const DEFAULT_GATEWAY_ID = "default";
+
+  const workersai = createWorkersAI({
+    binding: env.AI,
+    gateway: { id: DEFAULT_GATEWAY_ID },
+  });
   const model = workersai("@cf/meta/llama-3.1-8b-instruct", {
     safePrompt: true,
   });
@@ -221,6 +226,4 @@ export async function pickMovies(
 
     return `created mashup: ${mashup.title}`;
   }
-
-  return `failed to pick movies`;
-}
+};

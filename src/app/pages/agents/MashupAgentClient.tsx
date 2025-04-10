@@ -42,6 +42,10 @@ export default function MashupAgentClient() {
 
   const agent = useAgent({
     agent: "mashup-agent",
+
+    onOpen(event) {
+      console.log("WebSocket connection opened", event);
+    },
     onMessage: (message) => {
       try {
         if (!message.data) {
@@ -97,15 +101,6 @@ export default function MashupAgentClient() {
     }
   }, [title, tagline, plot, imageKey, imageDescription, audioKey]);
 
-  useEffect(() => {
-    return () => {
-      console.log("Component unmounting, cleaning up WebSocket connection");
-      if (agent && agent.close) {
-        agent.close();
-      }
-    };
-  }, [agent]);
-
   const handleGenerateMashup = async () => {
     if (!agent.id || !selectedMovie1 || !selectedMovie2) return;
 
@@ -113,6 +108,11 @@ export default function MashupAgentClient() {
     setError(null);
     resetMashup();
     setIsGenerating(true);
+
+    // Reconnect the WebSocket if it's not already connected
+    // if (agent.readyState === WebSocket.CLOSED) {
+    //   agent.reconnect();
+    // }
 
     agent.send(
       JSON.stringify({
