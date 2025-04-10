@@ -18,11 +18,15 @@ AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka "mash
 ![E.T. and Footloose](./docs/et-footloose.png)
 ![Forever and Pink](./docs/forever-pink.png)
 
+-- old screenshots. new ones coming soon with the agent streaming.
+
 ## Video Demo
 
 I recorded a video demo of the app that shows the main features in action.
 
 [👀 Watch the Demo](https://screen.studio/share/JRN2137W)
+
+-- Old demo. a little out of date. new one coming soon with the agent streaming.
 
 ## Important !!!
 
@@ -55,6 +59,7 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 - **RedwoodSDK**: https://www.rwsdk.com
   - React with TypeScript, React Server Components, Cloudflare Workers
 - **AI**: Cloudflare AIs
+- **AI Gateway**: Cloudflare AI Gateway for logs, caching, rate limiting, etc.
 - **Database**: Cloudflare D1 with Prisma ORM
 - **Queue**: Cloudflare Queues
 - **Image Generation**: Cloudflare R2 and D1
@@ -181,13 +186,45 @@ The agent uses WebSocket connections to:
 - Handle connection errors and cleanup
 - Manage the generation workflow state
 
+## Agent Routing
+
+The agent is routed via the `/agents/*` route.
+
+This is a Cloudflare specific routing mechanism that automatically routes HTTP requests and/or WebSocket connections to `/agents/:agent/:name`.
+
+It allows you to connect React apps directly to Agents using the `useAgent` hook for websockets updates.
+
+```ts
+route("/*", async ({ request }: RequestInfo) => {
+    // Automatically routes HTTP requests and/or WebSocket connections to /agents/:agent/:name
+    // Best for: connecting React apps directly to Agents using useAgent from agents/react
+    // The MashupAgent is defined in the MashupAgent.ts file
+    // Wrangler durable_objects config defines the agent name as MASHUP_AGENT and the class name as MashupAgent
+    // So /agents/mashup-agent/default will route to the MashupAgent when an agent client
+    // uses the `useAgent` hook for websockets updates
+
+    return (
+      (await routeAgentRequest(request, env)) ||
+      Response.json({ msg: "no agent here" }, { status: 404 })
+    );
+  }),
+```
+
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (Latest LTS version)
 - pnpm package manager
+
+### Cloudflare Services
+
 - Cloudflare account (for deployment)
+- Cloudflare R2 bucket (dev or prod)
+- Cloudflare D1 database (dev or prod)
+- Cloudflare Queues (dev or prod)
+- Cloudflare AI Gateway (setup via Cloudflare dashboard)
+- Cloudflare AI (setup via Cloudflare dashboard)
 
 ### Installation
 
@@ -250,9 +287,13 @@ pnpm release
 
 - `/src/app` - Main application components
 - `/src/app/pages/mashups` - Movie mashup functionality
+- `/src/app/pages/agents` - Agent functionality
+- `/src/app/api` - API routes when returning JSON, images, audio, etc. (ie, not JSX)
+- `/src/app/agents` - Where the agent lives and its routing
 - `/src/session` - User session management
 - `/prisma` - Database schema and migrations
 - `/migrations` - Database migration files
+- `/src/scripts` - Scripts for data seeding and migrations
 
 ## Contributing
 

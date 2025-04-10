@@ -3,7 +3,11 @@ import { streamText } from "ai";
 import type { Mashup } from "@prisma/client";
 
 /**
- * Helper function to stream text and update state
+ * Helper function to stream text and send it to the client
+ *
+ * call streamText with the model, systemPrompt, userPrompt, assistantPrompt
+ * for each chunk of text, send it to the client via the connection object
+ * return the complete result text so can save later in db
  */
 export async function streamTextAndUpdateState(
   connection: Connection,
