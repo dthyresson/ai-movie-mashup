@@ -9,6 +9,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Movie Mashups</title>
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <TurnstileScript />
       <script type="module" src="/src/client.tsx"></script>
       <link rel="stylesheet" href="/src/app.css" />
@@ -24,6 +25,11 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
                   href="/"
                   className="font-banner font-black text-2xl hover:text-purple-200 transition-colors"
                 >
+                  <img
+                    src="/favicon.svg"
+                    alt="Movie Mashups Logo"
+                    className="inline-block h-6 w-6 mr-2"
+                  />
                   AI Movie Mashups
                 </a>
               </h1>
