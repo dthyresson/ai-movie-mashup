@@ -1,6 +1,6 @@
 "use server";
 
-import { getMashups, MASHUPS_PER_PAGE } from "./functions";
+import { getMashups } from "./functions";
 import { MashupCard } from "@/app/pages/mashups/components/MashupCard";
 import {
   PaginationInfo,
@@ -9,6 +9,7 @@ import {
 import { PresetMashups } from "@/app/pages/mashups/components/PresetMashups";
 import { link } from "@/app/shared/links";
 import { RequestInfo } from "@redwoodjs/sdk/worker";
+import { getFavoritePresets } from "@/app/pages/presets/queries";
 
 export async function Mashups({ params }: RequestInfo<{ page: string }>) {
   const currentPage = Number(params.page) || 1;
@@ -18,6 +19,8 @@ export async function Mashups({ params }: RequestInfo<{ page: string }>) {
     currentPage: page,
     total,
   } = await getMashups(currentPage);
+
+  const presets = await getFavoritePresets(3);
 
   return (
     <div className="px-4 py-8">
@@ -31,12 +34,12 @@ export async function Mashups({ params }: RequestInfo<{ page: string }>) {
             >
               Create your first mashup!
             </a>
-            <PresetMashups />
+            <PresetMashups presets={presets} />
           </div>
         </div>
       ) : (
         <>
-          <PresetMashups />
+          <PresetMashups presets={presets} />
           <PaginationInfo page={page} total={total} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {mashups.map((mashup) => (

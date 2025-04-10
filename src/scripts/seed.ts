@@ -1,6 +1,7 @@
 import { defineScript } from "@redwoodjs/sdk/worker";
 import { db, setupDb } from "@/db";
 import { MOVIES } from "./movies";
+import { PRESET_MASHUPS } from "./presets";
 export default defineScript(async ({ env }) => {
   setupDb(env);
 
@@ -8,6 +9,7 @@ export default defineScript(async ({ env }) => {
     DELETE FROM User;
     DELETE FROM Credential;
     DELETE FROM Mashup;
+    DELETE FROM Preset;
     DELETE FROM Movie;
     DELETE FROM sqlite_sequence;
   `);
@@ -26,6 +28,15 @@ export default defineScript(async ({ env }) => {
       photo: movie.photo,
       overview: movie.overview,
       releaseDate: movie.releaseDate,
+    })),
+  });
+
+  // Create presets
+  await db.preset.createMany({
+    data: PRESET_MASHUPS.map((preset) => ({
+      movie1Id: preset.movie1Id,
+      movie2Id: preset.movie2Id,
+      isFavorite: preset.isFavorite,
     })),
   });
 

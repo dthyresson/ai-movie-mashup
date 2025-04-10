@@ -40,6 +40,14 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
                   </li>
                   <li>
                     <a
+                      href={link("/presets")}
+                      className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
+                    >
+                      Presets
+                    </a>
+                  </li>
+                  <li>
+                    <a
                       href={link("/agents/mashup")}
                       className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
                     >

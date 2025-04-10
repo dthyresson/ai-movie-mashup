@@ -5,6 +5,7 @@ import { route, render, prefix } from "@redwoodjs/sdk/router";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { Mashups } from "@/app/pages/mashups/Mashups";
+import { Presets } from "@/app/pages/presets/Presets";
 import { setCommonHeaders } from "@/app/headers";
 import { userRoutes } from "@/app/pages/user/routes";
 import { sessions, setupSessionStore } from "./session/store";
@@ -56,6 +57,7 @@ const app = defineApp([
   },
   render(Document, [
     route("/", Mashups),
+    route("/presets", Presets),
     prefix("/mashups", mashupRoutes),
     route("/protected", [
       ({ ctx }: RequestInfo) => {

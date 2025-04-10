@@ -6,6 +6,7 @@ export const link = defineLinks([
   "/mashups/page/:page",
   "/mashups/new",
   "/mashups/:id",
+  "/presets",
   "/agents/mashup",
   "/agents/mashup/:firstMovieId",
   "/agents/mashup/:firstMovieId/:secondMovieId",
