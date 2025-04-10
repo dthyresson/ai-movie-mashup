@@ -5,6 +5,7 @@ import { NewMashup } from "@/app/pages/mashups/NewMashup";
 
 export const mashupRoutes = [
   route("/", Mashups),
+  route("/page/:page", Mashups),
   route("/new", NewMashup),
   route("/:id", Mashup),
 ];

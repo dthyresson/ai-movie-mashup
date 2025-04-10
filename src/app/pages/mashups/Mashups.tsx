@@ -1,11 +1,22 @@
 "use server";
 
-import { getMashups } from "./functions";
+import { getMashups, MASHUPS_PER_PAGE } from "./functions";
 import { MashupCard } from "@/app/pages/mashups/components/MashupCard";
+import {
+  PaginationInfo,
+  PaginationControls,
+} from "@/app/pages/mashups/components/Pagination";
 import { link } from "@/app/shared/links";
+import { RequestInfo } from "@redwoodjs/sdk/worker";
 
-export async function Mashups() {
-  const mashups = await getMashups();
+export async function Mashups({ params }: RequestInfo<{ page: string }>) {
+  const currentPage = Number(params.page) || 1;
+  const {
+    mashups,
+    totalPages,
+    currentPage: page,
+    total,
+  } = await getMashups(currentPage);
 
   return (
     <div className="px-4 py-8">
@@ -22,19 +33,23 @@ export async function Mashups() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-          {mashups.map((mashup) => (
-            <MashupCard
-              key={mashup.id}
-              id={mashup.id}
-              title={mashup.title}
-              tagline={mashup.tagline}
-              plot={mashup.plot}
-              movie1={mashup.movie1}
-              movie2={mashup.movie2}
-            />
-          ))}
-        </div>
+        <>
+          <PaginationInfo page={page} total={total} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            {mashups.map((mashup) => (
+              <MashupCard
+                key={mashup.id}
+                id={mashup.id}
+                title={mashup.title}
+                tagline={mashup.tagline}
+                plot={mashup.plot}
+                movie1={mashup.movie1}
+                movie2={mashup.movie2}
+              />
+            ))}
+          </div>
+          <PaginationControls currentPage={page} totalPages={totalPages} />
+        </>
       )}
     </div>
   );

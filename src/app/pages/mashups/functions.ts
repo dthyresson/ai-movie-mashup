@@ -22,6 +22,8 @@ const TTS_MODEL = "@cf/myshell-ai/melotts";
 
 const DEFAULT_GATEWAY_ID = "default";
 
+export const MASHUPS_PER_PAGE = 9;
+
 // Function to generate the movie mashup plot, title, and tagline
 export async function generateMashupContent(
   movie1Details: Movie,
@@ -357,23 +359,44 @@ export async function mashupMovies({
   return mashup;
 }
 
-export async function getMashups() {
-  const mashups = await db.mashup.findMany({
-    where: {
-      status: {
-        equals: "COMPLETED",
-      },
-    },
-    include: {
-      movie1: true,
-      movie2: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+export async function getMashups(
+  page: number = 1,
+  pageSize: number = MASHUPS_PER_PAGE,
+) {
+  const skip = (page - 1) * pageSize;
 
-  return mashups;
+  const [mashups, total] = await Promise.all([
+    db.mashup.findMany({
+      where: {
+        status: {
+          equals: "COMPLETED",
+        },
+      },
+      include: {
+        movie1: true,
+        movie2: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: pageSize,
+    }),
+    db.mashup.count({
+      where: {
+        status: {
+          equals: "COMPLETED",
+        },
+      },
+    }),
+  ]);
+
+  return {
+    mashups,
+    total,
+    totalPages: Math.ceil(total / pageSize),
+    currentPage: page,
+  };
 }
 
 export async function getMashupById(id: string) {
