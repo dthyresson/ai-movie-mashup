@@ -6,6 +6,7 @@ import {
   PaginationInfo,
   PaginationControls,
 } from "@/app/pages/mashups/components/Pagination";
+import { PresetMashups } from "@/app/pages/mashups/components/PresetMashups";
 import { link } from "@/app/shared/links";
 import { RequestInfo } from "@redwoodjs/sdk/worker";
 
@@ -23,17 +24,19 @@ export async function Mashups({ params }: RequestInfo<{ page: string }>) {
       {mashups.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-neutral-800 text-lg">No mashups found.</p>
-          <div className="flex justify-center mt-4">
+          <div className="flex flex-col items-center gap-6 mt-4">
             <a
               href={link("/agents/mashup")}
               className="text-white hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
             >
               Create your first mashup!
             </a>
+            <PresetMashups />
           </div>
         </div>
       ) : (
         <>
+          <PresetMashups />
           <PaginationInfo page={page} total={total} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
             {mashups.map((mashup) => (

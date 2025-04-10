@@ -644,4 +644,12 @@ export const MOVIES = [
     photo: "/h0mkK00GjBCJoBYm3yvPdkzlIyV.jpg",
     releaseDate: "1962-10-24T00:00:00.000Z",
   },
+  {
+    id: "114-pretty-woman",
+    title: "Pretty Woman",
+    overview:
+      "When a millionaire wheeler-dealer enters a business contract with a Hollywood hooker Vivian Ward, he loses his heart in the bargain.",
+    photo: "/hMVMMy1yDUvdufpTl8J8KKNYaZX.jpg",
+    releaseDate: "1990-03-23T00:00:00.000Z",
+  },
 ];

@@ -9,6 +9,8 @@ import MashupAgentPage from "@/app/pages/agents/MashupAgentPage";
 
 export const agentRoutes = [
   route("/mashup", MashupAgentPage),
+  route("/mashup/:firstMovieId", MashupAgentPage),
+  route("/mashup/:firstMovieId/:secondMovieId", MashupAgentPage),
   route("/*", async ({ request }: RequestInfo) => {
     // Automatically routes HTTP requests and/or WebSocket connections to /agents/:agent/:name
     // Best for: connecting React apps directly to Agents using useAgent from agents/react

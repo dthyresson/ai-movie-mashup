@@ -8,7 +8,12 @@ import { MashupResults } from "./components/MashupResults";
 import { DebugMessages } from "./components/DebugMessages";
 import type { MessageData, MessageLog } from "./components/types";
 
-export default function MashupAgentClient() {
+interface MashupAgentClientProps {
+  firstMovieId?: string;
+  secondMovieId?: string;
+}
+
+export default function MashupAgentClient({ firstMovieId, secondMovieId }: MashupAgentClientProps) {
   const [selectedMovie1, setSelectedMovie1] = useState<string | null>(null);
   const [selectedMovie2, setSelectedMovie2] = useState<string | null>(null);
   const [title, setTitle] = useState<string | null>(null);
@@ -100,6 +105,21 @@ export default function MashupAgentClient() {
       setIsGenerating(false);
     }
   }, [title, tagline, plot, imageKey, imageDescription, audioKey]);
+
+  useEffect(() => {
+    // Auto-start mashup if both IDs are provided
+    if (firstMovieId && secondMovieId) {
+      setSelectedMovie1(firstMovieId);
+      setSelectedMovie2(secondMovieId);
+    }
+  }, [firstMovieId, secondMovieId]);
+
+  useEffect(() => {
+    // Start mashup when both movies are selected and not already generating
+    if (selectedMovie1 && selectedMovie2 && !isGenerating && !title) {
+      handleGenerateMashup();
+    }
+  }, [selectedMovie1, selectedMovie2]);
 
   const handleGenerateMashup = async () => {
     if (!agent.id || !selectedMovie1 || !selectedMovie2) return;
