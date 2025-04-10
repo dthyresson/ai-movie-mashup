@@ -54,6 +54,72 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 - **Asynchronous Processing**: Asynchronous processing of mashup requests with Cloudflare Queues
 - **AI Agents**: Real-time updates and streaming of generated content with WebSockets
 
+## Architecture Diagrams
+
+### Overall Agent Architecture
+```mermaid
+graph TD
+    A[Client Browser] -->|WebSocket| B[Agent Router /agents/*]
+    B --> C[MashupAgent]
+    C -->|Movie Selection| D[Movie Database]
+    C -->|Generate Content| E[AI Models]
+    E -->|Text| F[Llama 3.1]
+    E -->|Images| G[Flux]
+    E -->|Audio| H[MeloTTS]
+    C -->|Stream Updates| A
+```
+
+### WebSocket Communication Flow
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Router
+    participant MashupAgent
+    participant AI
+
+    Client->>Router: Connect to /agents/mashup-agent/default
+    Router->>MashupAgent: Route WebSocket connection
+    MashupAgent->>Client: Connection established
+    
+    Client->>MashupAgent: Select movies
+    MashupAgent->>AI: Generate title
+    AI->>MashupAgent: Stream title
+    MashupAgent->>Client: Stream title updates
+    
+    MashupAgent->>AI: Generate plot
+    AI->>MashupAgent: Stream plot
+    MashupAgent->>Client: Stream plot updates
+    
+    MashupAgent->>AI: Generate image
+    AI->>MashupAgent: Return image
+    MashupAgent->>Client: Send image URL
+```
+
+### Agent Routing Flow
+```mermaid
+flowchart LR
+    A[HTTP/WS Request] --> B{Route Check}
+    B -->|/agents/*| C[Agent Router]
+    C -->|/agents/mashup-agent/default| D[MashupAgent]
+    B -->|Other Routes| E[Regular HTTP Handler]
+    D -->|WebSocket| F[Client Connection]
+```
+
+### Mashup Generation Process
+```mermaid
+stateDiagram-v2
+    [*] --> Connecting
+    Connecting --> Connected: WebSocket Open
+    Connected --> MovieSelection: Select Movies
+    MovieSelection --> Generating: Start Generation
+    Generating --> GeneratingTitle: Generate Title
+    GeneratingTitle --> GeneratingPlot: Title Complete
+    GeneratingPlot --> GeneratingImage: Plot Complete
+    GeneratingImage --> GeneratingAudio: Image Complete
+    GeneratingAudio --> Complete: Audio Complete
+    Complete --> [*]
+```
+
 ## Technology Stack
 
 - **RedwoodSDK**: https://www.rwsdk.com
@@ -249,19 +315,36 @@ cp .env.example .env
 
 Edit the `.env` file with your configuration values.
 
-4. Initialize the database:
+4. Initialize the Development Environment
+
+```bash
+pnpm dev:init
+```
+
+This will:
+
+* Initializing development environment...
+* Running migrations...
+* Seeding database...
+
+It is imporant as it will ensurwe all rhe Worker bindings from `wrangler.jsonc` are setup.
+
+5. Initialize the database:
 
 ```bash
 pnpm migrate:dev
 ```
 
-5. Seed the database with movies:
+Note: Already done, but if want to redo.
+
+6. Seed the database with movies:
 
 ```bash
 pnpm seed
 ```
+Note: Already done, but if want to redo.
 
-6. Start the development server:
+7. Start the development server:
 
 ```bash
 pnpm dev

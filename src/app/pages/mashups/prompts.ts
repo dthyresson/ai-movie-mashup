@@ -164,9 +164,5 @@ export const getPosterPrompt = (
     Plot: ${plot}
   `;
 
-  console.debug(userPrompt, "The poster user prompt");
-  console.debug(assistantPrompt, "The poster assistant prompt");
-  console.debug(systemPrompt, "The poster system prompt");
-
   return { systemPrompt, userPrompt, assistantPrompt };
 };

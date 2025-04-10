@@ -231,7 +231,6 @@ export async function generatePosterPrompt(
     response: string;
   };
 
-  console.debug(imagePromptResult.response, "The image prompt result");
   return imagePromptResult.response;
 }
 
@@ -315,7 +314,7 @@ export async function mashupMovies({
 }) {
   const movie1Details = await getMovie(firstMovieId);
   const movie2Details = await getMovie(secondMovieId);
-  console.debug(movie1Details, movie2Details, "The movie details to mashup");
+
 
   if (!movie1Details || !movie2Details) {
     throw new Error("One or both movies not found");
@@ -335,7 +334,6 @@ export async function mashupMovies({
 
   const audioKey = await generateAudio(title, tagline, plot);
 
-  console.debug({ title, tagline, plot }, "The AI response");
 
   // Save the mashup to the database
   const mashup = await db.mashup.update({
