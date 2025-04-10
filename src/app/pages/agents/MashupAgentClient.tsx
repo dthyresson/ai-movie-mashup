@@ -1,23 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAgent } from "agents/react";
 import { getMovies } from "@/app/pages/movies/functions";
-import { Movie } from "@prisma/client";
+import type { Movie } from "@prisma/client";
 
 // MovieSelector component
 interface MovieSelectorProps {
   label: string;
   selectedMovie: string | null;
   onSelect: (movieId: string) => void;
+  otherSelectedMovie: string | null;
 }
 
 const MovieSelector: React.FC<MovieSelectorProps> = ({
   label,
   selectedMovie,
   onSelect,
+  otherSelectedMovie,
 }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -27,23 +31,109 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
     fetchMovies();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Find the selected movie object
+  const selectedMovieObj = movies.find((movie) => movie.id === selectedMovie);
+
+  // Filter out the movie that's already selected in the other dropdown
+  const availableMovies = movies.filter(
+    (movie) => !otherSelectedMovie || movie.id !== otherSelectedMovie,
+  );
+
   return (
-    <div>
+    <div className="relative" ref={dropdownRef}>
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}
       </label>
-      <select
-        className="w-full p-2 border border-gray-300 rounded-md"
-        value={selectedMovie || ""}
-        onChange={(e) => onSelect(e.target.value)}
+      <button
+        type="button"
+        className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex items-center justify-between"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <option value="">Select {label}</option>
-        {movies.map((movie) => (
-          <option key={movie.id} value={movie.id}>
-            {movie.title}
-          </option>
-        ))}
-      </select>
+        {selectedMovieObj ? (
+          <div className="flex items-center">
+            <img
+              src={`https://image.tmdb.org/t/p/w500/${selectedMovieObj.photo}`}
+              alt={selectedMovieObj.title}
+              className="size-6 shrink-0 rounded-sm mr-2"
+            />
+            <span>{selectedMovieObj.title}</span>
+          </div>
+        ) : (
+          <span className="text-gray-500">Select {label}</span>
+        )}
+        <svg
+          className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+          {availableMovies.map((movie) => (
+            <div
+              key={movie.id}
+              className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-purple-50"
+              onClick={() => {
+                onSelect(movie.id);
+                setIsOpen(false);
+              }}
+            >
+              <div className="flex items-center">
+                <img
+                  src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
+                  alt={movie.title}
+                  className="size-10 shrink-0 rounded-sm mr-2"
+                />
+                <span className="block truncate text-base font-medium">
+                  {movie.title}
+                </span>
+              </div>
+
+              {selectedMovie === movie.id && (
+                <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-purple-600">
+                  <svg
+                    className="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -193,7 +283,7 @@ export default function MashupAgentClient() {
     // Keep isGenerating true after reset
     setIsGenerating(true);
 
-    // Send the request
+    // It's time to start mashing!
     agent.send(
       JSON.stringify({
         movie1: selectedMovie1,
@@ -213,11 +303,13 @@ export default function MashupAgentClient() {
                 label="First Movie"
                 selectedMovie={selectedMovie1}
                 onSelect={setSelectedMovie1}
+                otherSelectedMovie={selectedMovie2}
               />
               <MovieSelector
                 label="Second Movie"
                 selectedMovie={selectedMovie2}
                 onSelect={setSelectedMovie2}
+                otherSelectedMovie={selectedMovie1}
               />
             </div>
             <div className="flex flex-col justify-center items-center">
@@ -331,11 +423,11 @@ export default function MashupAgentClient() {
                   />
                 </div>
               ) : (
-                <div className="mt-4 w-full bg-gray-100 p-4 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
+                <div className="mt-4 w-full bg-gray-100 p-2 rounded-lg flex items-center justify-center h-8">
+                  <div className="text-center flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-12 w-12 mx-auto text-gray-400 mb-2"
+                      className="h-5 w-5 text-gray-400 mr-2"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -347,11 +439,8 @@ export default function MashupAgentClient() {
                         d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
                       />
                     </svg>
-                    <p className="text-gray-500 font-medium">
-                      Audio coming soon
-                    </p>
-                    <p className="text-gray-400 text-sm mt-1">
-                      AI will read your mashup out loud when it's ready
+                    <p className="text-gray-500 text-sm">
+                      Audio will generate after plot is written
                     </p>
                   </div>
                 </div>
@@ -391,8 +480,7 @@ export default function MashupAgentClient() {
                         Poster coming soon
                       </p>
                       <p className="text-gray-400 text-sm mt-2">
-                        AI will generate design a unique movie poster based on
-                        the final plot ...
+                        AI will generate a poster when the design is complete
                       </p>
                     </div>
                   </div>
@@ -433,7 +521,7 @@ export default function MashupAgentClient() {
                       <div className="h-4 bg-gray-200 rounded w-4/5"></div>
                     </div>
                     <p className="text-gray-500 text-sm mt-4">
-                      AI is crafting an exciting plot for your movie mashup...
+                      AI is writing your movie mashup ...
                     </p>
                   </div>
                 )}
@@ -447,9 +535,9 @@ export default function MashupAgentClient() {
               </div>
             ) : (
               <div className="w-full bg-gray-100 p-4 rounded-lg">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <p className="text-gray-500 text-sm mt-2">
+                  Once we know the mashup plot, we'll design a poster ...
+                </p>
               </div>
             )}
           </div>
