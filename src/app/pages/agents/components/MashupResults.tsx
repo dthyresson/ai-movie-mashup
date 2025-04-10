@@ -66,7 +66,7 @@ export const MashupResults: React.FC<MashupResultsProps> = ({
                 />
               </svg>
               <p className="text-gray-500 text-sm">
-                Audio will generate after plot is written
+                Audio narration will be available once the plot is written
               </p>
             </div>
           </div>
@@ -100,9 +100,9 @@ export const MashupResults: React.FC<MashupResultsProps> = ({
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-gray-500 font-medium">Poster coming soon</p>
+                <p className="text-gray-500 font-medium">Coming soon!</p>
                 <p className="text-gray-400 text-sm mt-2">
-                  AI will generate a poster when the design is complete
+                  Once we have a design, it will appear here
                 </p>
               </div>
             </div>
@@ -130,7 +130,7 @@ export const MashupResults: React.FC<MashupResultsProps> = ({
                   />
                 </svg>
                 <h3 className="text-lg font-medium text-gray-700">
-                  Plot Summary
+                  Mashup Plot
                 </h3>
               </div>
               <div className="space-y-3">
@@ -154,7 +154,7 @@ export const MashupResults: React.FC<MashupResultsProps> = ({
       ) : (
         <div className="w-full bg-gray-100 p-4 rounded-lg">
           <p className="text-gray-500 text-sm mt-2 text-center">
-            Once we know the mashup plot, we'll design a poster ...
+            Poster design begins once we know the plot
           </p>
         </div>
       )}
