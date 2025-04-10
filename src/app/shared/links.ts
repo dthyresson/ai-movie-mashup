@@ -5,4 +5,5 @@ export const link = defineLinks([
   "/mashups",
   "/mashups/new",
   "/mashups/:id",
+  "/agents/mashup",
 ]);

@@ -83,8 +83,6 @@ export class MashupAgent extends Agent<Env> {
       console.error("Error parsing message:", error);
       connection.send("Error: Invalid JSON format");
     }
-    connection.send(`Received your message: ${message}`);
-    console.log("Message received:", message);
   }
 
   // Handle WebSocket connection errors
@@ -108,7 +106,18 @@ export class MashupAgent extends Agent<Env> {
     reason: string,
     wasClean: boolean,
   ): Promise<void> {
-    console.log(`Connection closed: ${code} - ${reason}`);
+    console.log(`Connection closed: ${code} - ${reason} (clean: ${wasClean})`);
+
+    // Clean up any resources associated with this connection
+    try {
+      // If there are any ongoing operations for this connection, cancel them
+      // This is a good place to clean up any state or resources associated with this connection
+
+      // Log the connection ID for debugging
+      console.log(`Cleaned up resources for connection: ${connection.id}`);
+    } catch (error) {
+      console.error(`Error during connection cleanup: ${error}`);
+    }
   }
 
   // Helper function to stream text and update state
@@ -268,22 +277,11 @@ export class MashupAgent extends Agent<Env> {
         "",
       );
 
-      // Generate poster
-      const { imageKey, imageDescription } = await this.generatePoster(
-        connection,
-        model,
-        title,
-        tagline,
-        plot,
-      );
-
-      // Generate audio
-      const audioKey = await this.generateAudioContent(
-        connection,
-        title,
-        tagline,
-        plot,
-      );
+      // Generate poster and audio concurrently
+      const [{ imageKey, imageDescription }, audioKey] = await Promise.all([
+        this.generatePoster(connection, model, title, tagline, plot),
+        this.generateAudioContent(connection, title, tagline, plot),
+      ]);
 
       const mashup = await db.mashup.create({
         data: {

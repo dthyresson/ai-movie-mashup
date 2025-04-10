@@ -14,7 +14,7 @@ export async function Mashups() {
           <p className="text-neutral-800 text-lg">No mashups found.</p>
           <div className="flex justify-center mt-4">
             <a
-              href={link("/mashups/new")}
+              href={link("/agents/mashup")}
               className="text-white hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
             >
               Create your first mashup!

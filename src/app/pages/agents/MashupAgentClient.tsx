@@ -37,7 +37,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
         value={selectedMovie || ""}
         onChange={(e) => onSelect(e.target.value)}
       >
-        <option value="">Select a movie</option>
+        <option value="">Select {label}</option>
         {movies.map((movie) => (
           <option key={movie.id} value={movie.id}>
             {movie.title}
@@ -87,7 +87,6 @@ export default function MashupAgentClient() {
     setAudioKey(null);
     setError(null);
     setMessages([]);
-    setIsGenerating(false);
   };
 
   const agent = useAgent({
@@ -122,7 +121,9 @@ export default function MashupAgentClient() {
         }
 
         // Update messages state with the raw data for debugging
-        setMessages((prev) => [...prev, { raw: message.data, parsed: data }]);
+        if (showDebug) {
+          setMessages((prev) => [...prev, { raw: message.data, parsed: data }]);
+        }
 
         // Process valid data fields
         if (data.title) setTitle((prev) => (prev || "") + data.title);
@@ -138,18 +139,6 @@ export default function MashupAgentClient() {
           });
         }
         if (data.audioKey) setAudioKey(data.audioKey);
-
-        // If we have all the data, set isGenerating to false
-        if (
-          title &&
-          tagline &&
-          plot &&
-          imageKey &&
-          imageDescription &&
-          audioKey
-        ) {
-          setIsGenerating(false);
-        }
       } catch (error) {
         const e = error as Error;
         console.error("Error processing message:", e);
@@ -167,14 +156,44 @@ export default function MashupAgentClient() {
     },
   });
 
+  // Add a useEffect to check if all data is received
+  useEffect(() => {
+    // Check if we have all the required data
+    const hasAllData =
+      title && tagline && plot && imageKey && imageDescription && audioKey;
+
+    // If we have all the data, set isGenerating to false
+    if (hasAllData) {
+      console.log("All data received, setting isGenerating to false");
+      setIsGenerating(false);
+    }
+  }, [title, tagline, plot, imageKey, imageDescription, audioKey]);
+
+  // Add cleanup effect to properly close the WebSocket connection
+  useEffect(() => {
+    // This function will be called when the component unmounts
+    return () => {
+      console.log("Component unmounting, cleaning up WebSocket connection");
+      if (agent && agent.close) {
+        agent.close();
+      }
+    };
+  }, [agent]);
+
   const handleGenerateMashup = async () => {
     if (!agent.id || !selectedMovie1 || !selectedMovie2) return;
 
+    // Set generating state first
     setIsGenerating(true);
     setError(null);
-    // clear the state
+
+    // Reset all other state
     resetMashup();
 
+    // Keep isGenerating true after reset
+    setIsGenerating(true);
+
+    // Send the request
     agent.send(
       JSON.stringify({
         movie1: selectedMovie1,
@@ -205,9 +224,33 @@ export default function MashupAgentClient() {
               <button
                 onClick={handleGenerateMashup}
                 disabled={!selectedMovie1 || !selectedMovie2 || isGenerating}
-                className="w-full max-w-xs bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
+                className={`w-full max-w-xs py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center ${
+                  !selectedMovie1 || !selectedMovie2
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : isGenerating
+                      ? "bg-purple-500 text-white cursor-wait"
+                      : "bg-purple-600 text-white hover:bg-purple-700"
+                }`}
               >
-                {isGenerating ? (
+                {!selectedMovie1 || !selectedMovie2 ? (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
+                      />
+                    </svg>
+                    Pick Two Movies To Mashup!
+                  </>
+                ) : isGenerating ? (
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -255,7 +298,7 @@ export default function MashupAgentClient() {
           </div>
         </div>
 
-        {/* Mashup Results Section - Only show when generating or when we have results */}
+        {/* Mashup Results Section - Only show when we have results or are generating with some content */}
         {(isGenerating ||
           title ||
           tagline ||
@@ -279,13 +322,38 @@ export default function MashupAgentClient() {
               ) : (
                 <div className="h-8 bg-gray-200 rounded-lg w-2/3 mx-auto mb-4 animate-pulse"></div>
               )}
-              {audioKey && audioKey !== "" && (
+              {audioKey && audioKey !== "" ? (
                 <div className="mt-auto">
                   <audio
                     src={`/api/audio/${audioKey}`}
                     controls
                     className="w-full"
                   />
+                </div>
+              ) : (
+                <div className="mt-4 w-full bg-gray-100 p-4 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12 mx-auto text-gray-400 mb-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                      />
+                    </svg>
+                    <p className="text-gray-500 font-medium">
+                      Audio coming soon
+                    </p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      AI will read your mashup out loud when it's ready
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -323,8 +391,8 @@ export default function MashupAgentClient() {
                         Poster coming soon
                       </p>
                       <p className="text-gray-400 text-sm mt-2">
-                        AI will generate a unique movie poster based on the
-                        final plot
+                        AI will generate design a unique movie poster based on
+                        the final plot ...
                       </p>
                     </div>
                   </div>
