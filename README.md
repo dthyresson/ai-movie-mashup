@@ -1,6 +1,6 @@
 # AI Movie Mashup
 
-> Griffin: So it’s a psychic, political, thriller comedy with a heart.
+> Griffin: So it's a psychic, political, thriller comedy with a heart.
 
 > Writer: With a heart, not unlike Ghost meets Manchurian Candidate.
 
@@ -48,6 +48,7 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 - **User Management**: Secure authentication and user profiles. Not yet implemented.
 - **Mashup Gallery**: Browse and explore previously created mashups
 - **Asynchronous Processing**: Asynchronous processing of mashup requests with Cloudflare Queues
+- **AI Agents**: Real-time updates and streaming of generated content with WebSockets
 
 ## Technology Stack
 
@@ -133,6 +134,52 @@ The application leverages several Cloudflare AI models for different functionali
 - **Text-to-Speech**: `@cf/myshell-ai/melotts`
   - Generates audio descriptions of the mashup movies
   - Uses MyShell AI's MeloTTS model for natural-sounding narration
+
+## AI Agents
+
+The application uses an agent-based architecture to handle the movie mashup generation process. The main agent, `MashupAgent`, orchestrates the entire workflow using WebSocket connections for real-time communication.
+
+### MashupAgent
+
+The `MashupAgent` is a stateful agent that:
+
+- Maintains WebSocket connections with clients
+- Processes movie selection requests
+- Coordinates the generation of mashup content
+- Handles error cases and connection lifecycle
+- Manages the streaming of generated content back to clients
+
+### Agent UI Components
+
+The agent interface consists of several React components:
+
+- **MovieSelector**: Allows users to choose two movies for the mashup
+- **GenerateButton**: Triggers the mashup generation process
+- **MashupResults**: Displays the generated content including:
+  - Title
+  - Tagline
+  - Plot
+  - Generated poster image
+  - Audio narration
+- **DebugMessages**: Optional component for monitoring WebSocket communication
+
+### Real-time Updates
+
+The agent system provides real-time updates as content is generated:
+
+- Streaming text updates for title, tagline, and plot
+- Progressive image generation
+- Audio file generation
+- Error handling and status updates
+
+### WebSocket Communication
+
+The agent uses WebSocket connections to:
+
+- Maintain persistent connections with clients
+- Stream generated content in real-time
+- Handle connection errors and cleanup
+- Manage the generation workflow state
 
 ## Getting Started
 
