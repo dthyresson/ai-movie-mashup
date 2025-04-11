@@ -57,6 +57,85 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 - **User Management**: Secure authentication and user profiles. Not yet implemented.
 - **Mashup Gallery**: Browse and explore previously created mashups
 
+## Project Structure
+
+- `/src/app` - Main application components
+- `/src/app/pages/mashups` - Movie mashup functionality
+  - `components/` - UI components for mashup creation and display
+  - `functions.ts` - Server-side functions
+- `/src/app/pages/presets` - Preset functionality
+  - `components/` - UI components for preset display
+    - `PresetLink.tsx` - Link component for preset navigation
+    - `LuckyLink.tsx` - Random movie combination link
+    - `PresetMashups.tsx` - Preset grid display
+  - `functions.ts` - Server-side functions for preset management
+  - `types.ts` - TypeScript type definitions
+- `/src/app/agents` - Agent implementation
+  - `MashupAgent.ts` - Main agent class
+  - `functions/` - Agent helper functions
+    - `mashupMovies.ts` - Core mashup generation logic
+    - `generateTitle.ts` - Title generation
+    - `generateTagline.ts` - Tagline generation
+    - `generatePlot.ts` - Plot generation
+    - `generatePoster.ts` - Poster image generation
+    - `generateAudioContent.ts` - Audio generation
+    - `streamTextAndUpdateState.ts` - Text streaming utilities
+- `/prisma` - Database schema and migrations
+- `/src/scripts` - Scripts for data seeding and migrations
+  - `presets.ts` - Predefined movie combinations for seeding
+  - `movies.ts` - Movies for seeding
+
+## Application Routes
+
+The application uses several route handlers to manage different aspects of the system:
+
+### Main Application Routes
+
+- `/` - Home page (redirects to mashups)
+- `/presets` - Presets page
+- `/protected` - Protected route (requires authentication)
+
+### Mashup Routes
+
+- `/mashups` - Main mashups page
+- `/mashups/page/:page` - Paginated mashups
+- `/mashups/view/:id` - View a specific mashup
+- `/mashups/new` - Create a new mashup
+- `/mashups/new/:firstMovieId` - Create mashup with first movie selected
+- `/mashups/new/:firstMovieId/:secondMovieId` - Create mashup with both movies selected
+
+### API Routes
+
+- `/api/mashups/:id` - Get mashup details by ID
+- `/api/poster/:key` - Get poster image by key
+- `/api/mashups/:id/poster` - Get poster for a specific mashup
+- `/api/audio/:key` - Get audio file by key
+- `/api/mashups/:id/audio` - Get audio for a specific mashup
+- `/api/random-mashup` - Get a random movie combination
+
+### Agent Routes
+
+- `/agents/*` - WebSocket routes for agent communication
+  - Automatically routes to appropriate agent based on path
+  - Used for real-time updates and streaming content generation
+  - Main agent path: `/agents/mashup-agent/default`
+
+### User Routes
+
+- `/user/*` - User authentication and management routes
+  - Includes login, registration, and profile management
+
+### Route Configuration
+
+The application uses several route configuration files:
+
+1. `worker.tsx` - Main application router setup
+2. `routes.ts` files in various directories:
+   - `src/app/api/routes.ts` - API endpoints
+   - `src/app/agents/routes.ts` - Agent WebSocket routes
+   - `src/app/pages/mashups/routes.ts` - Mashup page routes
+3. `links.ts` - Defines all available routes for client-side navigation
+
 ## Architecture Diagrams
 
 ### Overall Agent Architecture
@@ -518,33 +597,6 @@ To deploy to Cloudflare:
 ```bash
 pnpm release
 ```
-
-## Project Structure
-
-- `/src/app` - Main application components
-- `/src/app/pages/mashups` - Movie mashup functionality
-  - `components/` - UI components for mashup creation and display
-  - `functions.ts` - Server-side functions
-- `/src/app/pages/presets` - Preset functionality
-  - `components/` - UI components for preset display
-    - `PresetLink.tsx` - Link component for preset navigation
-    - `LuckyLink.tsx` - Random movie combination link
-    - `PresetMashups.tsx` - Preset grid display
-  - `functions.ts` - Server-side functions for preset management
-  - `types.ts` - TypeScript type definitions
-- `/src/app/agents` - Agent implementation
-  - `MashupAgent.ts` - Main agent class
-  - `functions/` - Agent helper functions
-    - `mashupMovies.ts` - Core mashup generation logic
-    - `generateTitle.ts` - Title generation
-    - `generateTagline.ts` - Tagline generation
-    - `generatePlot.ts` - Plot generation
-    - `generatePoster.ts` - Poster image generation
-    - `generateAudioContent.ts` - Audio generation
-    - `streamTextAndUpdateState.ts` - Text streaming utilities
-- `/prisma` - Database schema and migrations
-- `/src/scripts` - Scripts for data seeding and migrations
-  - `presets.ts` - Predefined movie combinations for seeding
 
 ## Contributing
 
