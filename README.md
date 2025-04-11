@@ -43,20 +43,24 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 ## Features
 
 - **Movie Selection**: Choose two movies to combine into a unique mashup
+- **AI Agents**: Real-time updates and streaming of generated content with WebSockets
 - **AI-Generated Content**: Automatically generates:
   - Creative movie titles
   - Engaging taglines
   - Detailed plot summaries
   - Custom movie posters
   - Audio text to speech of the mashup plot
+- **Presets**: Pre-defined movie combinations for quick mashup generation
+  - Browse curated movie pairings
+  - Mark favorites for easy access
+  - "Lucky" random movie combination
 - **User Management**: Secure authentication and user profiles. Not yet implemented.
 - **Mashup Gallery**: Browse and explore previously created mashups
-- **Asynchronous Processing**: Asynchronous processing of mashup requests with Cloudflare Queues
-- **AI Agents**: Real-time updates and streaming of generated content with WebSockets
 
 ## Architecture Diagrams
 
 ### Overall Agent Architecture
+
 ```mermaid
 graph TD
     A[Client Browser] -->|WebSocket| B[Agent Router /agents/*]
@@ -70,6 +74,7 @@ graph TD
 ```
 
 ### WebSocket Communication Flow
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -80,22 +85,31 @@ sequenceDiagram
     Client->>Router: Connect to /agents/mashup-agent/default
     Router->>MashupAgent: Route WebSocket connection
     MashupAgent->>Client: Connection established
-    
+
     Client->>MashupAgent: Select movies
     MashupAgent->>AI: Generate title
     AI->>MashupAgent: Stream title
     MashupAgent->>Client: Stream title updates
-    
+
+    MashupAgent->>AI: Generate tagline
+    AI->>MashupAgent: Stream tagline
+    MashupAgent->>Client: Stream tagline updates
+
     MashupAgent->>AI: Generate plot
     AI->>MashupAgent: Stream plot
     MashupAgent->>Client: Stream plot updates
-    
+
     MashupAgent->>AI: Generate image
     AI->>MashupAgent: Return image
     MashupAgent->>Client: Send image URL
+
+    MashupAgent->>AI: Generate audio
+    AI->>MashupAgent: Return audio
+    MashupAgent->>Client: Send audio URL
 ```
 
 ### Agent Routing Flow
+
 ```mermaid
 flowchart LR
     A[HTTP/WS Request] --> B{Route Check}
@@ -106,6 +120,7 @@ flowchart LR
 ```
 
 ### Mashup Generation Process
+
 ```mermaid
 stateDiagram-v2
     [*] --> Connecting
@@ -113,10 +128,10 @@ stateDiagram-v2
     Connected --> MovieSelection: Select Movies
     MovieSelection --> Generating: Start Generation
     Generating --> GeneratingTitle: Generate Title
-    GeneratingTitle --> GeneratingPlot: Title Complete
-    GeneratingPlot --> GeneratingImage: Plot Complete
-    GeneratingImage --> GeneratingAudio: Image Complete
-    GeneratingAudio --> Complete: Audio Complete
+    GeneratingTitle --> GeneratingTagline: Title Complete
+    GeneratingTagline --> GeneratingPlot: Tagline Complete
+    GeneratingPlot --> GeneratingMedia: Plot Complete
+    GeneratingMedia --> Complete: Media Complete
     Complete --> [*]
 ```
 
@@ -125,12 +140,12 @@ stateDiagram-v2
 - **RedwoodSDK**: https://www.rwsdk.com
   - React with TypeScript, React Server Components, Cloudflare Workers
 - **AI**: Cloudflare AIs
-- **AI Gateway**: Cloudflare AI Gateway for logs, caching, rate limiting, etc.
+  - Text Generation: `@cf/meta/llama-3.1-8b-instruct`
+  - Image Generation: `@cf/black-forest-labs/flux-1-schnell`
+  - Text-to-Speech: `@cf/myshell-ai/melotts`
+- **AI Gateway**: Cloudflare AI Gateway for logs, caching, rate limiting
 - **Database**: Cloudflare D1 with Prisma ORM
-- **Queue**: Cloudflare Queues
-- **Image Generation**: Cloudflare R2 and D1
-- **Storage**: Cloudflare R2
-- **Authentication**: WebAuthn for secure user authentication
+- **Storage**: Cloudflare R2 for images and audio
 - **Styling**: Tailwind CSS
 - **Build Tools**: Vite
 
@@ -188,6 +203,21 @@ The `Mashup` model stores generated movie combinations:
 - Relations:
   - Links to two source `Movie` records
 
+### Presets
+
+The `Preset` model represents pre-defined movie combinations:
+
+- `id`: CUID-based unique identifier
+- `createdAt`: Timestamp of preset creation
+- `updatedAt`: Timestamp of last update
+- `movie1Id`: First movie ID
+- `movie2Id`: Second movie ID
+- `isFavorite`: Boolean flag for favorite presets
+- Relations:
+  - Links to two source `Movie` records via `movie1` and `movie2`
+- Constraints:
+  - Unique combination of `movie1Id` and `movie2Id`
+
 ## AI Models
 
 The application leverages several Cloudflare AI models for different functionalities:
@@ -208,7 +238,7 @@ The application leverages several Cloudflare AI models for different functionali
 
 ## AI Agents
 
-The application uses an agent-based architecture to handle the movie mashup generation process. The main agent, `MashupAgent`, orchestrates the entire workflow using WebSocket connections for real-time communication.
+The application uses a single `MashupAgent` to handle the entire movie mashup generation process. The agent maintains WebSocket connections with clients and orchestrates the generation of content in real-time.
 
 ### MashupAgent
 
@@ -216,13 +246,17 @@ The `MashupAgent` is a stateful agent that:
 
 - Maintains WebSocket connections with clients
 - Processes movie selection requests
-- Coordinates the generation of mashup content
+- Coordinates the generation of mashup content in sequence:
+  1. Title generation
+  2. Tagline generation
+  3. Plot generation
+  4. Media generation (poster and audio)
 - Handles error cases and connection lifecycle
 - Manages the streaming of generated content back to clients
 
-### Agent UI Components
+### Mashup Creator UI Components
 
-The agent interface consists of several React components:
+The mashup creator interface consists of several React components:
 
 - **MovieSelector**: Allows users to choose two movies for the mashup
 - **GenerateButton**: Triggers the mashup generation process
@@ -234,47 +268,166 @@ The agent interface consists of several React components:
   - Audio narration
 - **DebugMessages**: Optional component for monitoring WebSocket communication
 
-### Real-time Updates
+### Real-time Updates with useAgent
 
-The agent system provides real-time updates as content is generated:
+The Mashup Creator UI leverages the Cloudflare Agents SDK's `useAgent` hook to establish and maintain a WebSocket connection with the `MashupAgent`. This hook is crucial for:
 
-- Streaming text updates for title, tagline, and plot
-- Progressive image generation
-- Audio file generation
-- Error handling and status updates
+1. **Connection Management**:
 
-### WebSocket Communication
+   - Automatically establishes a WebSocket connection to `/agents/mashup-agent/default`
+   - Handles connection lifecycle (open, close, error)
+   - Manages reconnection logic
 
-The agent uses WebSocket connections to:
+2. **Real-time State Updates**:
 
-- Maintain persistent connections with clients
-- Stream generated content in real-time
-- Handle connection errors and cleanup
-- Manage the generation workflow state
+   - Receives streaming updates for generated content:
+     - Title chunks as they're generated
+     - Tagline chunks as they're generated
+     - Plot chunks as they're generated
+     - Image and audio URLs when complete
+   - Updates UI state in real-time using React state management
+
+3. **Message Handling**:
+
+   - Processes incoming WebSocket messages
+   - Parses JSON data
+   - Updates appropriate state variables based on message type
+   - Handles error cases and connection issues
+
+4. **Content Generation**:
+   - Sends movie selection to the agent
+   - Triggers the mashup generation process
+   - Manages the generation state (loading, error, complete)
+
+Example usage in the MashupCreator component:
+
+```tsx
+const agent = useAgent({
+  agent: "mashup-agent",
+  onMessage: (message) => {
+    // Handle streaming updates
+    if (data.title) updateStreamingState(setTitle, data.title);
+    if (data.tagline) updateStreamingState(setTagline, data.tagline);
+    if (data.plot) updateStreamingState(setPlot, data.plot);
+    // ... handle other content types
+  },
+  onError: (error) => {
+    // Handle connection errors
+    setError("Connection error. Please try again.");
+  },
+  onClose: () => {
+    // Handle connection closure
+    setIsGenerating(false);
+  },
+});
+```
+
+The `useAgent` hook provides a seamless way to integrate real-time, streaming content generation into the React UI, making the mashup creation process feel immediate and interactive.
 
 ## Agent Routing
 
-The agent is routed via the `/agents/*` route.
-
-This is a Cloudflare specific routing mechanism that automatically routes HTTP requests and/or WebSocket connections to `/agents/:agent/:name`.
-
-It allows you to connect React apps directly to Agents using the `useAgent` hook for websockets updates.
+The agent is routed via the `/agents/*` route, which automatically routes WebSocket connections to the appropriate agent instance. The routing is handled by the RedwoodSDK's agent routing system.
 
 ```ts
 route("/*", async ({ request }: RequestInfo) => {
-    // Automatically routes HTTP requests and/or WebSocket connections to /agents/:agent/:name
-    // Best for: connecting React apps directly to Agents using useAgent from agents/react
-    // The MashupAgent is defined in the MashupAgent.ts file
-    // Wrangler durable_objects config defines the agent name as MASHUP_AGENT and the class name as MashupAgent
-    // So /agents/mashup-agent/default will route to the MashupAgent when an agent client
-    // uses the `useAgent` hook for websockets updates
-
     return (
       (await routeAgentRequest(request, env)) ||
       Response.json({ msg: "no agent here" }, { status: 404 })
     );
   }),
 ```
+
+## Add New Movies
+
+To add new movies to the system:
+
+1. **Source Movies from TMDB**:
+
+   - All movie data comes from The Movie Database (TMDB) at https://www.themoviedb.org
+   - Each movie has a unique TMDB ID (e.g., "11-star-wars", "12-finding-nemo")
+
+2. **Add to Movies Array**:
+   In `src/scripts/movies.ts`, add a new movie object with the following structure:
+
+   ```typescript
+   {
+     id: "tmdb-id",  // The TMDB ID
+     title: "Movie Title",
+     photo: "/path-to-poster.jpg",  // TMDB poster path
+     overview: "Movie description/synopsis",
+     releaseDate: "YYYY-MM-DD"  // Optional release date
+   }
+   ```
+
+3. **Example**:
+   ```typescript
+   {
+     id: "12345-movie-name",
+     title: "New Movie",
+     photo: "/new-poster.jpg",
+     overview: "A new movie description...",
+     releaseDate: "2024-01-01"
+   }
+   ```
+
+## Add New Presets
+
+To create new movie mashup presets:
+
+1. **Create Preset Combinations**:
+   In `src/scripts/presets.ts`, add a new preset object with the following structure:
+
+   ```typescript
+   {
+     movie1Id: "tmdb-id-1",  // First movie's TMDB ID
+     movie2Id: "tmdb-id-2",  // Second movie's TMDB ID
+     isFavorite: false  // Optional: mark as favorite
+   }
+   ```
+
+2. **Example**:
+   ```typescript
+   {
+     movie1Id: "12345-movie-name",
+     movie2Id: "67890-another-movie",
+     isFavorite: true
+   }
+   ```
+
+### Seeding the Database
+
+After adding new movies and presets:
+
+1. **Run the Seed Script**:
+   ```bash
+   pnpm seed
+   ```
+
+The `seed.ts` script will:
+
+- Clear existing data
+- Create a test user
+- Add all movies from `movies.ts`
+- Create presets from `presets.ts`
+
+### Important Notes
+
+1. **TMDB IDs**:
+
+   - Always use the TMDB ID format (e.g., "12345-movie-name")
+   - These IDs are used to fetch movie details and posters
+   - Ensure the IDs exist in TMDB's database
+
+2. **Preset Combinations**:
+
+   - Both `movie1Id` and `movie2Id` must reference valid movie IDs
+   - The combination of `movie1Id` and `movie2Id` must be unique
+   - You can mark interesting combinations as favorites with `isFavorite: true`
+
+3. **Data Validation**:
+   - The seed script will validate the data
+   - It ensures all referenced movies exist
+   - It maintains data integrity in the database
 
 ## Getting Started
 
@@ -288,7 +441,6 @@ route("/*", async ({ request }: RequestInfo) => {
 - Cloudflare account (for deployment)
 - Cloudflare R2 bucket (dev or prod)
 - Cloudflare D1 database (dev or prod)
-- Cloudflare Queues (dev or prod)
 - Cloudflare AI Gateway (setup via Cloudflare dashboard)
 - Cloudflare AI (setup via Cloudflare dashboard)
 
@@ -323,9 +475,9 @@ pnpm dev:init
 
 This will:
 
-* Initializing development environment...
-* Running migrations...
-* Seeding database...
+- Initializing development environment...
+- Running migrations...
+- Seeding database...
 
 It is imporant as it will ensurwe all rhe Worker bindings from `wrangler.jsonc` are setup.
 
@@ -342,6 +494,7 @@ Note: Already done, but if want to redo.
 ```bash
 pnpm seed
 ```
+
 Note: Already done, but if want to redo.
 
 7. Start the development server:
@@ -370,13 +523,28 @@ pnpm release
 
 - `/src/app` - Main application components
 - `/src/app/pages/mashups` - Movie mashup functionality
-- `/src/app/pages/agents` - Agent functionality
-- `/src/app/api` - API routes when returning JSON, images, audio, etc. (ie, not JSX)
-- `/src/app/agents` - Where the agent lives and its routing
-- `/src/session` - User session management
+  - `components/` - UI components for mashup creation and display
+  - `functions.ts` - Server-side functions
+- `/src/app/pages/presets` - Preset functionality
+  - `components/` - UI components for preset display
+    - `PresetLink.tsx` - Link component for preset navigation
+    - `LuckyLink.tsx` - Random movie combination link
+    - `PresetMashups.tsx` - Preset grid display
+  - `functions.ts` - Server-side functions for preset management
+  - `types.ts` - TypeScript type definitions
+- `/src/app/agents` - Agent implementation
+  - `MashupAgent.ts` - Main agent class
+  - `functions/` - Agent helper functions
+    - `mashupMovies.ts` - Core mashup generation logic
+    - `generateTitle.ts` - Title generation
+    - `generateTagline.ts` - Tagline generation
+    - `generatePlot.ts` - Plot generation
+    - `generatePoster.ts` - Poster image generation
+    - `generateAudioContent.ts` - Audio generation
+    - `streamTextAndUpdateState.ts` - Text streaming utilities
 - `/prisma` - Database schema and migrations
-- `/migrations` - Database migration files
 - `/src/scripts` - Scripts for data seeding and migrations
+  - `presets.ts` - Predefined movie combinations for seeding
 
 ## Contributing
 
