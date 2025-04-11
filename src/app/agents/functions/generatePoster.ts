@@ -1,7 +1,41 @@
 import { Connection } from "agents";
-import { generatePosterImage } from "@/app/pages/mashups/functions";
-import { getPosterPrompt } from "@/app/pages/mashups/prompts";
+import { getPosterPrompt } from "@/app/agents/functions/prompts";
 import { streamTextAndUpdateState } from "./streamTextAndUpdateState";
+import { env } from "cloudflare:workers";
+import { IMAGE_GENERATION_MODEL, DEFAULT_GATEWAY_ID } from "./index";
+
+// Function to generate the poster image
+export async function generatePosterImage(prompt: string) {
+  const response = await env.AI.run(
+    IMAGE_GENERATION_MODEL,
+    {
+      prompt: `${prompt}.`,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  );
+
+  // Convert base64 string to a Blob/File for R2 storage
+  const base64Data = response.image || "";
+  const binaryData = atob(base64Data);
+  const bytes = new Uint8Array(binaryData.length);
+  for (let i = 0; i < binaryData.length; i++) {
+    bytes[i] = binaryData.charCodeAt(i);
+  }
+  const blob = new Blob([bytes], { type: "image/jpeg" });
+
+  // Upload to R2 bucket
+  const image = await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
+    httpMetadata: {
+      contentType: "image/jpeg",
+    },
+  });
+
+  return image.key;
+}
 
 /**
  * Helper function to generate poster image

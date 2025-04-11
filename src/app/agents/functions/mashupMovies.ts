@@ -6,11 +6,18 @@ import {
   getMashupPlotPrompt,
   getMashupTitlePrompt,
   getMashupTaglinePrompt,
-} from "@/app/pages/mashups/prompts";
+} from "@/app/agents/functions/prompts";
 import { db } from "@/db";
 import { streamTextAndUpdateState } from "./streamTextAndUpdateState";
 import { generatePoster } from "./generatePoster";
+import { getPosterPrompt } from "./prompts";
 import { generateAudioContent } from "./generateAudioContent";
+
+import {
+  TEXT_GENERATION_MODEL,
+  IMAGE_GENERATION_MODEL,
+  DEFAULT_GATEWAY_ID,
+} from "./index";
 
 const getMoviesToMash = async (movie1: string, movie2: string) => {
   const movie1Data = await getMovie(movie1);
@@ -172,7 +179,7 @@ export const mashupMovies = async (
     binding: env.AI,
     gateway: { id: DEFAULT_GATEWAY_ID },
   });
-  const model = workersai("@cf/meta/llama-3.1-8b-instruct", {
+  const model = workersai(TEXT_GENERATION_MODEL, {
     safePrompt: true,
   });
 
@@ -227,3 +234,43 @@ export const mashupMovies = async (
     return `created mashup: ${mashup.title}`;
   }
 };
+
+export async function generatePosterPrompt(
+  title: string,
+  tagline: string,
+  plot: string,
+) {
+  const { systemPrompt, userPrompt, assistantPrompt } = getPosterPrompt(
+    title,
+    tagline,
+    plot,
+  );
+
+  const imagePromptResult = (await env.AI.run(
+    TEXT_GENERATION_MODEL,
+    {
+      messages: [
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: userPrompt,
+        },
+        {
+          role: "assistant",
+          content: assistantPrompt,
+        },
+      ],
+      stream: false,
+      max_tokens: 512,
+    },
+    {
+      gateway: {
+        id: DEFAULT_GATEWAY_ID,
+      },
+    },
+  )) as unknown as {
+    response: string;
+  };
+
+  return imagePromptResult.response;
+}
