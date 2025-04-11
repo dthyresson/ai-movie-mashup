@@ -36,7 +36,7 @@ You should run locally with `pnpm dev` and check it out.
 
 I would not deploy until I can ensure rate limiting is in place to prevent abuse and runaway AI charges.
 
-The `api` is open currently and thus accessible to all and open to potential high AI costs.
+The `api` is open currently and thus accessible to all and open so you will want to use the [AI Gateway ](https://developers.cloudflare.com/ai-gateway/) to both cache and limit the usage.
 
 If you choose to deploy, your do so knowing that you are responsible for the cost of the AI usage.
 
@@ -87,7 +87,7 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
 
 ## Application Routes
 
-The application uses several route handlers to manage different aspects of the system:
+The application uses several request handlers to manage different aspects of the system:
 
 ### Main Application Routes
 
@@ -218,15 +218,15 @@ stateDiagram-v2
 
 - **RedwoodSDK**: https://www.rwsdk.com
   - React with TypeScript, React Server Components, Cloudflare Workers
-- **AI**: Cloudflare AIs
+- **AI**: [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/)
   - Text Generation: `@cf/meta/llama-3.1-8b-instruct`
   - Image Generation: `@cf/black-forest-labs/flux-1-schnell`
   - Text-to-Speech: `@cf/myshell-ai/melotts`
-- **AI Gateway**: Cloudflare AI Gateway for logs, caching, rate limiting
-- **Database**: Cloudflare D1 with Prisma ORM
-- **Storage**: Cloudflare R2 for images and audio
-- **Styling**: Tailwind CSS
-- **Build Tools**: Vite
+- **AI Gateway**: [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/) for logs, caching, rate limiting
+- **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) with Prisma ORM
+- **Storage**: [Cloudflare R2](https://developers.cloudflare.com/r2/) for images and audio
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Build Tools**: [Vite](https://vitejs.dev/)
 
 ## Database Schema and Data Models
 
@@ -422,7 +422,7 @@ To add new movies to the system:
 
 1. **Source Movies from TMDB**:
 
-   - All movie data comes from The Movie Database (TMDB) at https://www.themoviedb.org
+   - All movie data comes from [The Movie Database (TMDB)](https://www.themoviedb.org)
    - Each movie has a unique TMDB ID (e.g., "11-star-wars", "12-finding-nemo")
 
 2. **Add to Movies Array**:
