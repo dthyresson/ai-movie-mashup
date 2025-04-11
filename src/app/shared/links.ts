@@ -5,10 +5,10 @@ export const link = defineLinks([
   "/mashups",
   "/mashups/page/:page",
   "/mashups/new",
-  "/mashups/:id",
+  "/mashups/view/:id",
+  "/mashups/new/:firstMovieId",
+  "/mashups/new/:firstMovieId/:secondMovieId",
   "/presets",
-  "/agents/mashup",
-  "/agents/mashup/:firstMovieId",
-  "/agents/mashup/:firstMovieId/:secondMovieId",
+
   "/api/random-mashup",
 ]);

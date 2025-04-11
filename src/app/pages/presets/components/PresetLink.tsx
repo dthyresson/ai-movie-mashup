@@ -14,7 +14,7 @@ export const PresetLink = ({ preset }: PresetLinkProps) => {
   return (
     <a
       key={preset.id}
-      href={link(`/agents/mashup/:firstMovieId/:secondMovieId`, {
+      href={link(`/mashups/new/:firstMovieId/:secondMovieId`, {
         firstMovieId: preset.movie1.id,
         secondMovieId: preset.movie2.id,
       })}

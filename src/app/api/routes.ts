@@ -5,49 +5,6 @@ import { env } from "cloudflare:workers";
 import { getTwoRandomMovies } from "@/app/pages/movies/functions";
 
 export const apiRoutes = [
-  // Create a new mashup, but in a pending state before the job is queued
-  // The queue job will update the mashup with the final details. See the worker.
-  // Also, yes this is an open route, but this app is just an experiment
-  // and I'm not worried about it yet
-  route(
-    "/mashup/:firstMovieId/:secondMovieId",
-    async ({
-      params,
-    }: RequestInfo<{ firstMovieId: string; secondMovieId: string }>) => {
-      const firstMovieId = params.firstMovieId;
-      const secondMovieId = params.secondMovieId;
-
-      // Create a pending mashup record first
-      const pendingMashup = await db.mashup.create({
-        data: {
-          movie1Id: firstMovieId,
-          movie2Id: secondMovieId,
-          status: "PENDING",
-          title: "Processing...",
-          tagline: "Processing...",
-          plot: "Processing...",
-          imageKey: "",
-          imageDescription: "",
-        },
-      });
-
-      // Queue the job
-      await env.QUEUE.send({
-        channel: "new-mashup",
-        id: pendingMashup.id,
-        firstMovieId,
-        secondMovieId,
-      });
-
-      return new Response(JSON.stringify({ id: pendingMashup.id }), {
-        status: 302, // Accepted
-        headers: {
-          "Content-Type": "application/json",
-          Location: `/mashups/${pendingMashup.id}`,
-        },
-      });
-    },
-  ),
   // Get a mashup by id and return the mashup details in JSON format
   route("/mashups/:id", async ({ params }: RequestInfo<{ id: string }>) => {
     const id = params.id;
@@ -190,7 +147,7 @@ export const apiRoutes = [
     return new Response(null, {
       status: 302, // Redirect
       headers: {
-        Location: `/agents/mashup/${movie1.id}/${movie2.id}`,
+        Location: `/mashups/new/${movie1.id}/${movie2.id}`,
       },
     });
   }),

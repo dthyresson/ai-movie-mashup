@@ -14,7 +14,6 @@ import { db, setupDb } from "./db";
 import type { User } from "@prisma/client";
 import { apiRoutes } from "@/app/api/routes";
 import { mashupRoutes } from "@/app/pages/mashups/routes";
-import { mashupMovies } from "@/app/pages/mashups/functions";
 import { agentRoutes } from "@/app/agents/routes";
 
 export { SessionDurableObject } from "./session/durableObject";
@@ -25,7 +24,7 @@ export type AppContext = {
   user: User | null;
 };
 
-const app = defineApp([
+export default defineApp([
   setCommonHeaders(),
   async ({ ctx, request, headers }) => {
     await setupDb(env);
@@ -59,6 +58,9 @@ const app = defineApp([
     route("/", Mashups),
     route("/presets", Presets),
     prefix("/mashups", mashupRoutes),
+    prefix("/user", userRoutes),
+    prefix("/api", apiRoutes),
+    prefix("/agents", agentRoutes),
     route("/protected", [
       ({ ctx }: RequestInfo) => {
         if (!ctx.user) {
@@ -70,80 +72,5 @@ const app = defineApp([
       },
       Home,
     ]),
-    prefix("/user", userRoutes),
-    prefix("/api", apiRoutes),
-    prefix("/agents", agentRoutes),
-    route(
-      "/mashups/:id/audio",
-      async ({ params }: RequestInfo<{ id: string }>) => {
-        const id = params.id;
-        const mashup = await db.mashup.findUnique({
-          where: {
-            id,
-          },
-        });
-
-        if (!mashup) {
-          return new Response("Mashup not found", { status: 404 });
-        }
-
-        return new Response(null, { status: 200 });
-      },
-    ),
   ]),
 ]);
-
-export default {
-  fetch: app.fetch,
-  // Process the message queue
-  async queue(batch, _env) {
-    for (const message of batch.messages) {
-      console.log("handling message" + JSON.stringify(message));
-
-      const { channel, id, firstMovieId, secondMovieId } = message.body as {
-        channel: string;
-        id: string;
-        firstMovieId: string;
-        secondMovieId: string;
-      };
-
-      // Process the new mashup message
-      if (channel === "new-mashup") {
-        try {
-          // Process the mashup
-          const mashup = await mashupMovies({
-            id,
-            firstMovieId,
-            secondMovieId,
-          });
-
-          console.debug("updating mashup via Queue", mashup);
-
-          // Update the existing mashup record and mark it as completed
-          await db.mashup.update({
-            where: { id },
-            data: {
-              status: "COMPLETED",
-              title: mashup.title,
-              tagline: mashup.tagline,
-              plot: mashup.plot,
-              imageKey: mashup.imageKey,
-              audioKey: mashup.audioKey,
-              imageDescription: mashup.imageDescription,
-            },
-          });
-        } catch (error) {
-          // Update the mashup and retry
-          await db.mashup.update({
-            where: { id },
-            data: {
-              status: "PENDING",
-            },
-          });
-
-          message.retry();
-        }
-      }
-    }
-  },
-} satisfies ExportedHandler<Env>;

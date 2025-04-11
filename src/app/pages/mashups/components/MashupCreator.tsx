@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { useAgent } from "agents/react";
-import { MovieSelector } from "./components/MovieSelector";
-import { GenerateButton } from "./components/GenerateButton";
-import { MashupResults } from "./components/MashupResults";
-import { DebugMessages } from "./components/DebugMessages";
-import type { MessageData, MessageLog } from "./components/types";
+import { MovieSelector } from "@/app/pages/mashups/components/MovieSelector";
+import { GenerateButton } from "@/app/pages/mashups/components/GenerateButton";
+import { MashupResults } from "@/app/pages/mashups/components/MashupResults";
+import { DebugMessages } from "@/app/pages/mashups/components/DebugMessages";
+import type {
+  MessageData,
+  MessageLog,
+} from "@/app/pages/mashups/components/types";
 
-interface MashupAgentClientProps {
-  firstMovieId?: string;
-  secondMovieId?: string;
-}
+import type { NewMashupParams } from "@/app/pages/mashups/NewMashup";
 
-export default function MashupAgentClient({ firstMovieId, secondMovieId }: MashupAgentClientProps) {
+export default function MashupCreator({
+  firstMovieId,
+  secondMovieId,
+}: NewMashupParams) {
   const [selectedMovie1, setSelectedMovie1] = useState<string | null>(null);
   const [selectedMovie2, setSelectedMovie2] = useState<string | null>(null);
   const [title, setTitle] = useState<string | null>(null);

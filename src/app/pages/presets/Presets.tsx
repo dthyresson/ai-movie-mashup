@@ -2,7 +2,7 @@
 
 import { PresetLink } from "@/app/pages/presets/components/PresetLink";
 import { LuckyLink } from "@/app/pages/presets/components/LuckyLink";
-import { getAllPresets } from "./queries";
+import { getAllPresets } from "./functions";
 
 export const Presets = async () => {
   const presets = await getAllPresets();
