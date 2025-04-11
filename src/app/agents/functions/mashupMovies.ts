@@ -189,7 +189,7 @@ export const mashupMovies = async (
       movie2Data,
     );
 
-    // Generate tagline
+    // Step 3: Generate tagline
     const tagline = await generateTagline(
       connection,
       model,
@@ -198,7 +198,7 @@ export const mashupMovies = async (
       movie2Data,
     );
 
-    // Step 3: Generate plot
+    // Step 4: Generate plot
     const plot = await generatePlot(
       connection,
       model,
@@ -208,11 +208,11 @@ export const mashupMovies = async (
       movie2Data,
     );
 
-    // Generate poster and audio concurrently
+    // Step 5: Generate poster and audio concurrently
     const [{ imageKey, imageDescription }, audioKey] =
       await generateMediaContent(connection, model, title, tagline, plot);
 
-    // Step 5: Create the mashup and save to database
+    // Step 6: Create the mashup and save to database
     const mashup = await createMashupInDb(
       title,
       tagline,
