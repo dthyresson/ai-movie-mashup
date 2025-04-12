@@ -56,7 +56,6 @@ export const generateTagline = async (
     taglineUserPrompt,
     taglineAssistantPrompt,
     "tagline",
-    "",
     512,
   );
 };

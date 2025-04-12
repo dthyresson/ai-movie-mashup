@@ -58,6 +58,5 @@ export const generatePlot = async (
     plotUserPrompt,
     plotAssistantPrompt,
     "plot",
-    "",
   );
 };

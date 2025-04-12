@@ -48,6 +48,5 @@ export const generateTitle = async (
     titleUserPrompt,
     titleAssistantPrompt,
     "title",
-    "",
   );
 };

@@ -87,7 +87,6 @@ export async function generatePoster(
     posterUserPrompt,
     posterAssistantPrompt,
     "imageDescription",
-    "",
     512,
   );
 

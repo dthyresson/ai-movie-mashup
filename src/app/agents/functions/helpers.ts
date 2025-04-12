@@ -25,14 +25,9 @@ export async function streamAndReturnCompleteText(
   userPrompt: string,
   assistantPrompt: string,
   stateKey: keyof Mashup,
-  initialValue: string = "",
   maxTokens: number = 512,
 ): Promise<string> {
-  let result = initialValue;
-
-  connection.send(result);
-
-  const { textStream } = streamText({
+  const { textStream, text } = streamText({
     model,
     maxTokens,
     messages: [
@@ -43,14 +38,12 @@ export async function streamAndReturnCompleteText(
   });
 
   for await (const delta of textStream) {
-    const s = {
+    const chunk = {
       [stateKey]: delta,
     };
 
-    result += delta;
-
-    connection.send(JSON.stringify(s));
+    connection.send(JSON.stringify(chunk));
   }
 
-  return result;
+  return await text;
 }
