@@ -8,7 +8,6 @@ export * from "./createMashupInDb";
 export * from "./generatePoster";
 export * from "./generateAudioContent";
 export * from "./helpers";
-export * from "./prompts";
 
 // AI Gateway ID for logging, caching, and rate limiting
 export const DEFAULT_GATEWAY_ID = "default";

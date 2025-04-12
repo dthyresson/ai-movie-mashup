@@ -1,5 +1,4 @@
 import { Connection } from "agents";
-import { getPosterPrompt } from "@/app/agents/functions/prompts";
 import { streamAndReturnCompleteText } from "./helpers";
 import { env } from "cloudflare:workers";
 import {
@@ -7,6 +6,35 @@ import {
   DEFAULT_GATEWAY_ID,
   base64ToBlob,
 } from "./index";
+
+const getPosterPrompt = (title: string, tagline: string, plot: string) => {
+  const systemPrompt = `
+    You are a movie art director and cinematographer.
+    You are given a movie title, tagline, and plot.
+    You are to describe a movie poster for the movie.
+    The description should be a complelling and cinematic image that captures the genre of the movie.
+
+    Important:
+      * The description cannot contain violence, gore, or any other content that is not suitable for a movie poster.
+      * Only return the description of the movie poster with no other text.
+      * Include the title and tagline in the poster description if you think it is appropriate.
+  `;
+
+  const assistantPrompt = `
+    Important:
+      * The description must be 40 words or less.
+      * Make sure the poster title is the provided title.
+      * Make sure the poster tagline is the provided tagline.
+  `;
+
+  const userPrompt = `
+    Title: ${title}
+    Tagline: ${tagline}
+    Plot: ${plot}
+  `;
+
+  return { systemPrompt, userPrompt, assistantPrompt };
+};
 
 // Function to generate the poster image
 export async function generatePosterImage(prompt: string) {

@@ -79,7 +79,7 @@ If you choose to deploy, your do so knowing that you are responsible for the cos
     - `generatePlot.ts` - Plot generation
     - `generatePoster.ts` - Poster image generation
     - `generateAudioContent.ts` - Audio generation
-    - `streamTextAndUpdateState.ts` - Text streaming utilities
+    - `helpers.ts` - Utility functions for streaming and data conversion
 - `/prisma` - Database schema and migrations
 - `/src/scripts` - Scripts for data seeding and migrations
   - `presets.ts` - Predefined movie combinations for seeding
@@ -305,15 +305,32 @@ The application leverages several Cloudflare AI models for different functionali
 
   - Used for generating movie titles, taglines, plots, and poster descriptions
   - Based on Meta's Llama 3.1 8B parameter model
+  - Utilizes the `streamAndReturnCompleteText` helper function from `helpers.ts` for real-time streaming
 
 - **Image Generation**: `@cf/black-forest-labs/flux-1-schnell`
 
   - Creates unique movie posters based on AI-generated descriptions
   - Powered by Black Forest Labs' Flux model
+  - Uses `base64ToBlob` helper function from `helpers.ts` for image data conversion
 
 - **Text-to-Speech**: `@cf/myshell-ai/melotts`
   - Generates audio descriptions of the mashup movies
   - Uses MyShell AI's MeloTTS model for natural-sounding narration
+
+### Helper Functions
+
+The application uses several key helper functions from `helpers.ts`:
+
+- `streamAndReturnCompleteText`: Handles real-time streaming of AI-generated text content
+
+  - Manages WebSocket connections
+  - Streams text chunks to clients
+  - Returns complete generated text
+  - Used for title, tagline, plot, and poster description generation
+
+- `base64ToBlob`: Converts base64-encoded image data to binary blobs
+  - Used for processing AI-generated images
+  - Handles image data conversion for storage in R2
 
 ## AI Agents
 
