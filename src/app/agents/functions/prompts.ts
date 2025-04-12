@@ -1,40 +1,5 @@
 import type { Movie } from "@prisma/client";
 
-// Get a mashup prompt used to generate a new mashup title, tagline, and plot summary
-export const getMashupPrompt = (movie1: Movie, movie2: Movie) => {
-  const systemPrompt = `
-    You are a movie screenwriter.
-    You are given two movies.
-    You are to write a mashup of the two movies.
-    The mashup should be a new movie that is a fun, quirky combination of the two movies and their characters, plots, and settings.
-    The mashup should be in the style of the two movies.
-
-    Important:
-    
-    * Just return a new title, tagline, and mashup plot summary of the new movie.
-    * The mashup summary should be 300 words or less.
-`;
-
-  const userPrompt = `
-    Movie 1: Title: ${movie1.title}
-    Movie 1: Plot: ${movie1.overview}
-    Movie 2: Title: ${movie2.title}
-    Movie 2: Plot: ${movie2.overview}
-    `;
-
-  const assistantPrompt = `
-    Always return a new title, tagline, and mashup plot summary of the new movie in the following JSON format: 
-
-    {
-      title: string,
-      tagline: string,
-      plot: string
-    }
-`;
-
-  return { systemPrompt, userPrompt, assistantPrompt };
-};
-
 // Get a mashup prompt used to generate a new mashup title
 export const getMashupTitlePrompt = (movie1: Movie, movie2: Movie) => {
   const systemPrompt = `
@@ -111,12 +76,13 @@ export const getMashupTaglinePrompt = (
     You are to write an enaging tagline for a mashup of the two movies.
     The mashup should be a new movie that is a fun, quirky combination of the two movies and their characters, plots, and settings.
     The mashup should be in the style of the two movies.
-    The tagline should be 10 words or less appropriate for a movie poster.
 
     Important:
     
     * Just return a new tagline
-`;
+    * The tagline should be 10 words or less appropriate for a movie poster.
+
+    `;
 
   const userPrompt = `
     Mashup Title: ${mashupTitle}
@@ -148,14 +114,14 @@ export const getPosterPrompt = (
     Important:
       * The description cannot contain violence, gore, or any other content that is not suitable for a movie poster.
       * Only return the description of the movie poster with no other text.
-      * The description must be 40 words or less, concise but creative.
       * Include the title and tagline in the poster description if you think it is appropriate.
   `;
 
   const assistantPrompt = `
     Important:
-      * If you include a poster title, make sure it is the provided title.
-      * If you include a poster tagline, make sure it is the provided tagline.
+      * The description must be 40 words or less.
+      * Make sure the poster title is the provided title.
+      * Make sure the poster tagline is the provided tagline.
   `;
 
   const userPrompt = `

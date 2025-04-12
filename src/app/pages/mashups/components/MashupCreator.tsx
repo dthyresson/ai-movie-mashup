@@ -19,6 +19,7 @@ export default function MashupCreator({
 }: NewMashupParams) {
   const [selectedMovie1, setSelectedMovie1] = useState<string | null>(null);
   const [selectedMovie2, setSelectedMovie2] = useState<string | null>(null);
+  const [isRandomRoute, setIsRandomRoute] = useState<boolean>(false);
   const [title, setTitle] = useState<string | null>(null);
   const [tagline, setTagline] = useState<string | null>(null);
   const [plot, setPlot] = useState<string | null>(null);
@@ -114,15 +115,23 @@ export default function MashupCreator({
     if (firstMovieId && secondMovieId) {
       setSelectedMovie1(firstMovieId);
       setSelectedMovie2(secondMovieId);
+      setIsRandomRoute(true);
     }
   }, [firstMovieId, secondMovieId]);
 
   useEffect(() => {
-    // Start mashup when both movies are selected and not already generating
-    if (selectedMovie1 && selectedMovie2 && !isGenerating && !title) {
+    // Auto-generate only if coming from random route
+    if (
+      isRandomRoute &&
+      selectedMovie1 &&
+      selectedMovie2 &&
+      !isGenerating &&
+      !title
+    ) {
       handleGenerateMashup();
+      setIsRandomRoute(false); // Reset the flag after auto-generation
     }
-  }, [selectedMovie1, selectedMovie2]);
+  }, [selectedMovie1, selectedMovie2, isRandomRoute]);
 
   const handleGenerateMashup = async () => {
     if (!agent.id || !selectedMovie1 || !selectedMovie2) return;

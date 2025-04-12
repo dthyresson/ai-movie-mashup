@@ -103,6 +103,7 @@ The application uses several request handlers to manage different aspects of the
 - `/mashups/new` - Create a new mashup
 - `/mashups/new/:firstMovieId` - Create mashup with first movie selected
 - `/mashups/new/:firstMovieId/:secondMovieId` - Create mashup with both movies selected
+- `/mashups/random-mashup` - Generate a random movie combination mashup
 
 ### API Routes
 
@@ -111,7 +112,6 @@ The application uses several request handlers to manage different aspects of the
 - `/api/mashups/:id/poster` - Get poster for a specific mashup
 - `/api/audio/:key` - Get audio file by key
 - `/api/mashups/:id/audio` - Get audio for a specific mashup
-- `/api/random-mashup` - Get a random movie combination
 
 ### Agent Routes
 

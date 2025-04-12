@@ -2,7 +2,6 @@ import { route } from "@redwoodjs/sdk/router";
 import { RequestInfo } from "@redwoodjs/sdk/worker";
 import { db } from "@/db";
 import { env } from "cloudflare:workers";
-import { getTwoRandomMovies } from "@/app/pages/movies/functions";
 
 export const apiRoutes = [
   // Get a mashup by id and return the mashup details in JSON format
@@ -137,18 +136,4 @@ export const apiRoutes = [
       });
     },
   ),
-  route("/random-mashup", async () => {
-    const { movie1, movie2 } = await getTwoRandomMovies();
-
-    if (!movie1 || !movie2) {
-      return new Response("Could not find random movies", { status: 404 });
-    }
-
-    return new Response(null, {
-      status: 302, // Redirect
-      headers: {
-        Location: `/mashups/new/${movie1.id}/${movie2.id}`,
-      },
-    });
-  }),
 ];

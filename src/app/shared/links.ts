@@ -8,7 +8,6 @@ export const link = defineLinks([
   "/mashups/view/:id",
   "/mashups/new/:firstMovieId",
   "/mashups/new/:firstMovieId/:secondMovieId",
+  "/mashups/random-mashup",
   "/presets",
-
-  "/api/random-mashup",
 ]);
