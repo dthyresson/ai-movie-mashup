@@ -1,5 +1,5 @@
 import { Connection } from "agents";
-import { getMashupPlotPrompt, streamTextAndUpdateState } from "./index";
+import { getMashupPlotPrompt, streamAndReturnCompleteText } from "./index";
 
 export const generatePlot = async (
   connection: Connection,
@@ -15,7 +15,7 @@ export const generatePlot = async (
     assistantPrompt: plotAssistantPrompt,
   } = getMashupPlotPrompt(title, tagline, movie1Data, movie2Data);
 
-  return await streamTextAndUpdateState(
+  return await streamAndReturnCompleteText(
     connection,
     model,
     plotSystemPrompt,

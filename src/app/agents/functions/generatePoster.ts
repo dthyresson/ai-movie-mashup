@@ -1,15 +1,19 @@
 import { Connection } from "agents";
 import { getPosterPrompt } from "@/app/agents/functions/prompts";
-import { streamTextAndUpdateState } from "./streamTextAndUpdateState";
+import { streamAndReturnCompleteText } from "./helpers";
 import { env } from "cloudflare:workers";
-import { IMAGE_GENERATION_MODEL, DEFAULT_GATEWAY_ID } from "./index";
+import {
+  IMAGE_GENERATION_MODEL,
+  DEFAULT_GATEWAY_ID,
+  base64ToBlob,
+} from "./index";
 
 // Function to generate the poster image
 export async function generatePosterImage(prompt: string) {
-  const response = await env.AI.run(
+  const { image } = await env.AI.run(
     IMAGE_GENERATION_MODEL,
     {
-      prompt: `${prompt}.`,
+      prompt,
     },
     {
       gateway: {
@@ -18,23 +22,17 @@ export async function generatePosterImage(prompt: string) {
     },
   );
 
-  // Convert base64 string to a Blob/File for R2 storage
-  const base64Data = response.image || "";
-  const binaryData = atob(base64Data);
-  const bytes = new Uint8Array(binaryData.length);
-  for (let i = 0; i < binaryData.length; i++) {
-    bytes[i] = binaryData.charCodeAt(i);
-  }
-  const blob = new Blob([bytes], { type: "image/jpeg" });
+  const contentType = "image/jpeg";
+  const blob = base64ToBlob(image || "", contentType);
 
   // Upload to R2 bucket
-  const image = await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
+  const savedImage = await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
     httpMetadata: {
-      contentType: "image/jpeg",
+      contentType,
     },
   });
 
-  return image.key;
+  return savedImage.key;
 }
 
 /**
@@ -54,7 +52,7 @@ export async function generatePoster(
     assistantPrompt: posterAssistantPrompt,
   } = getPosterPrompt(title, tagline, plot);
 
-  const imageDescription = await streamTextAndUpdateState(
+  const imageDescription = await streamAndReturnCompleteText(
     connection,
     model,
     posterSystemPrompt,

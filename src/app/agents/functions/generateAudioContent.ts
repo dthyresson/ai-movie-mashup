@@ -1,13 +1,13 @@
 import type { Connection } from "agents";
 import { env } from "cloudflare:workers";
-import { TTS_MODEL, DEFAULT_GATEWAY_ID } from "./index";
+import { TTS_MODEL, DEFAULT_GATEWAY_ID, base64ToBlob } from "./index";
 
 export async function generateAudio(
   title: string,
   tagline: string,
   plot: string,
 ) {
-  const result = (await env.AI.run(
+  const { audio } = (await env.AI.run(
     TTS_MODEL,
     {
       prompt: `Now playing. ${title}. ${tagline}. ${plot}`,
@@ -19,23 +19,17 @@ export async function generateAudio(
     },
   )) as unknown as { audio: string };
 
-  // Convert base64 string to a Blob
-  const base64Data = result.audio || "";
-  const binaryData = atob(base64Data);
-  const bytes = new Uint8Array(binaryData.length);
-  for (let i = 0; i < binaryData.length; i++) {
-    bytes[i] = binaryData.charCodeAt(i);
-  }
-  const audioBlob = new Blob([bytes], { type: "audio/mp3" });
+  const contentType = "audio/mp3";
+  const audioBlob = base64ToBlob(audio, contentType);
 
   // Upload to R2 bucket
-  const audioKey = await env.R2.put(`mashup-${Date.now()}.mp3`, audioBlob, {
+  const savedAudio = await env.R2.put(`mashup-${Date.now()}.mp3`, audioBlob, {
     httpMetadata: {
-      contentType: "audio/mp3",
+      contentType,
     },
   });
 
-  return audioKey.key;
+  return savedAudio.key;
 }
 
 /**

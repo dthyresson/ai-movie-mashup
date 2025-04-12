@@ -26,6 +26,7 @@ export const mashupMovies = async (
     binding: env.AI,
     gateway: { id: DEFAULT_GATEWAY_ID },
   });
+
   const model = workersai(TEXT_GENERATION_MODEL, {
     safePrompt: true,
   });

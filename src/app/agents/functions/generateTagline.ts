@@ -1,5 +1,5 @@
 import { Connection } from "agents";
-import { getMashupTaglinePrompt, streamTextAndUpdateState } from "./index";
+import { getMashupTaglinePrompt, streamAndReturnCompleteText } from "./index";
 
 export const generateTagline = async (
   connection: Connection,
@@ -14,7 +14,7 @@ export const generateTagline = async (
     assistantPrompt: taglineAssistantPrompt,
   } = getMashupTaglinePrompt(title, movie1Data, movie2Data);
 
-  return await streamTextAndUpdateState(
+  return await streamAndReturnCompleteText(
     connection,
     model,
     taglineSystemPrompt,

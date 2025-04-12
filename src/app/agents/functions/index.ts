@@ -7,7 +7,7 @@ export * from "./generateMediaContent";
 export * from "./createMashupInDb";
 export * from "./generatePoster";
 export * from "./generateAudioContent";
-export * from "./streamTextAndUpdateState";
+export * from "./helpers";
 export * from "./prompts";
 
 // AI Gateway ID for logging, caching, and rate limiting

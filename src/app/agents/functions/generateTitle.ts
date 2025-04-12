@@ -1,5 +1,5 @@
 import { Connection } from "agents";
-import { getMashupTitlePrompt, streamTextAndUpdateState } from "./index";
+import { getMashupTitlePrompt, streamAndReturnCompleteText } from "./index";
 
 export const generateTitle = async (
   connection: Connection,
@@ -13,7 +13,7 @@ export const generateTitle = async (
     assistantPrompt: titleAssistantPrompt,
   } = getMashupTitlePrompt(movie1Data, movie2Data);
 
-  return await streamTextAndUpdateState(
+  return await streamAndReturnCompleteText(
     connection,
     model,
     titleSystemPrompt,
