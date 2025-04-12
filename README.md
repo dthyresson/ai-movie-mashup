@@ -301,7 +301,7 @@ The `Preset` model represents pre-defined movie combinations:
 
 The application leverages several Cloudflare AI models for different functionalities:
 
-- **Text Generation**: `@cf/meta/llama-3.1-8b-instruct`
+- **Text Generation**: `@cf/meta/llama-3.2-3b-instruct`
 
   - Used for generating movie titles, taglines, plots, and poster descriptions
   - Based on Meta's Llama 3.1 8B parameter model
