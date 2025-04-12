@@ -38,6 +38,9 @@ importers:
       ai:
         specifier: ^4.3.4
         version: 4.3.4(react@19.0.0-rc-f2df5694-20240916)(zod@3.24.2)
+      lucide-react:
+        specifier: ^0.487.0
+        version: 0.487.0(react@19.0.0-rc-f2df5694-20240916)
       react:
         specifier: 19.0.0-rc-f2df5694-20240916
         version: 19.0.0-rc-f2df5694-20240916
@@ -1982,6 +1985,11 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
+
+  lucide-react@0.487.0:
+    resolution: {integrity: sha512-aKqhOQ+YmFnwq8dWgGjOuLc8V1R9/c/yOd+zDY4+ohsR2Jo05lSGc3WsstYPIzcTpeosN7LoCkLReUUITvaIvw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -4555,6 +4563,10 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  lucide-react@0.487.0(react@19.0.0-rc-f2df5694-20240916):
+    dependencies:
+      react: 19.0.0-rc-f2df5694-20240916
 
   magic-string@0.30.17:
     dependencies:

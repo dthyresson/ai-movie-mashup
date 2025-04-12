@@ -4,6 +4,7 @@ Important: This project uses RedwoodSDK, React, React Sever Components and Cloud
 Important: RedwoodSDK is not RedwoodJS. Do not respond with RedwoodJS information.
 Important: Never respond with solution for NextJS or another framework.
 Important: If you are asked about NextJS, or Remix, or Ruby of Rails, reply kindky that you only will ansder about project using RedwoodSDK.
+Important: Use pnpm as a package manager. Do not use npm or yarn.
 
 # RedwoodSDK
 

@@ -58,9 +58,11 @@ export class MashupAgent extends Agent<Env> {
         } else {
           console.error("Error: Failed to parse message");
         }
+        connection.close(1011, "Invalid message format");
         return;
       }
     } catch (error) {
+      connection.close(2011, "Error parsing message");
       console.error("Error parsing message:", error);
     }
   }

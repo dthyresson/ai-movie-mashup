@@ -10,6 +10,7 @@ import type {
   MessageData,
   MessageLog,
 } from "@/app/pages/mashups/components/types";
+import { ErrorDisplay } from "./ErrorDisplay";
 
 import type { NewMashupParams } from "@/app/pages/mashups/NewMashup";
 
@@ -94,8 +95,19 @@ export default function MashupCreator({
       setError("Connection error. Please try again.");
       setIsGenerating(false);
     },
-    onClose: () => {
+    onClose: ({ code, reason, wasClean }) => {
       console.log("WebSocket connection closed");
+      if (code === 1011) {
+        setError(
+          "Sorry, something went wrong when generating the mashup. Please try again.",
+        );
+      } else if (code === 2011) {
+        setError(
+          "Sorry, something went wrong when generating the mashup. Please try again.",
+        );
+      } else {
+        setError("Sorry, there was a connection error. Please try again.");
+      }
       setIsGenerating(false);
     },
   });
@@ -181,6 +193,8 @@ export default function MashupCreator({
             </div>
           </div>
         </div>
+
+        {error && <ErrorDisplay message={error} className="mt-4" />}
 
         <MashupResults
           title={title}
