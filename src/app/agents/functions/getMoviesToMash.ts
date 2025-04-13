@@ -1,4 +1,3 @@
-// import { getMovie } from "@/app/pages/movies/functions";
 import { db } from "@/db";
 
 export async function getMovies() {

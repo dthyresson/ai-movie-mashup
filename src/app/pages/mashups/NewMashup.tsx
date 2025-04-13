@@ -2,7 +2,7 @@
 
 import { RequestInfo } from "@redwoodjs/sdk/worker";
 import MashupCreator from "@/app/pages/mashups/components/MashupCreator";
-import { getMovies } from "@/app/pages/movies/functions";
+import { getMovies } from "@/app/pages/mashups/functions";
 
 export interface NewMashupParams {
   firstMovieId?: string;

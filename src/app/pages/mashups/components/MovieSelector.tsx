@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { Movie } from "@prisma/client";
 import { ChevronDownIcon, CheckIcon } from "./icons";
-
 interface MovieSelectorProps {
   label: string;
   selectedMovie: string | null;

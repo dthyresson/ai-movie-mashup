@@ -7,23 +7,24 @@ export const Navigation = () => (
         <h1 className="text-2xl font-bold hover:text-neutral-200 transition-colors">
           <a
             href="/"
-            className="font-banner font-black text-2xl hover:text-purple-200 transition-colors"
+            className="font-banner font-black text-md md:text-xl lg:text-2xl sm:text-md hover:text-purple-200 transition-colors flex items-center"
           >
             <img
               src="/favicon.svg"
               alt="Movie Mashups Logo"
-              className="inline-block h-6 w-6 mr-2"
+              className="inline-block h-6 w-6 mr-2 sm:mr-1"
             />
-            AI Movie Mashups
+            <span className="hidden sm:inline">Movie Mashups</span>
+            <span className="sm:hidden">Movie Mashups</span>
           </a>
         </h1>
 
         <nav className="font-banner">
-          <ul className="flex space-x-6">
+          <ul className="flex space-x-6 text-sm md:text-lg lg:text-lg">
             <li>
               <a
                 href={link("/mashups")}
-                className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors  bg-purple-400 px-4 py-2 rounded-md"
               >
                 All
               </a>
@@ -31,7 +32,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/presets")}
-                className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md"
               >
                 Presets
               </a>
@@ -39,7 +40,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/mashups/new")}
-                className="hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md"
               >
                 New
               </a>

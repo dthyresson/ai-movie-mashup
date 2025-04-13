@@ -1,4 +1,4 @@
-import { getTwoRandomMovies } from "@/app/pages/movies/functions";
+import { getTwoRandomMovies } from "@/app/pages/mashups/functions";
 
 import { route } from "@redwoodjs/sdk/router";
 import { Mashup } from "@/app/pages/mashups/Mashup";
