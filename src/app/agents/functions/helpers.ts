@@ -27,13 +27,6 @@ export async function streamAndReturnCompleteText(
   stateKey: keyof Mashup,
   maxTokens: number = 512,
 ): Promise<string> {
-  console.log(
-    "streamAndReturnCompleteText",
-    stateKey,
-    systemPrompt,
-    userPrompt,
-    assistantPrompt,
-  );
   const { textStream, text } = streamText({
     model,
     maxTokens,
@@ -48,8 +41,6 @@ export async function streamAndReturnCompleteText(
     const chunk = {
       [stateKey]: delta,
     };
-
-    console.log("chunk", JSON.stringify(chunk));
 
     connection.send(JSON.stringify(chunk));
   }
