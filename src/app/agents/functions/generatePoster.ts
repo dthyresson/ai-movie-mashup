@@ -40,7 +40,11 @@ const getPosterPrompt = (title: string, tagline: string, plot: string) => {
 };
 
 // Function to generate the poster image
-export async function generatePosterImage(prompt: string) {
+export async function generatePosterImage(
+  prompt: string,
+  title: string,
+  tagline: string,
+) {
   try {
     const { image } = await retryWithExponentialBackoff(
       async () => {
@@ -68,8 +72,10 @@ export async function generatePosterImage(prompt: string) {
     const savedImage = await retryWithExponentialBackoff(
       async () => {
         return await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
-          httpMetadata: {
+          customMetadata: {
             contentType,
+            title,
+            tagline,
           },
         });
       },
@@ -113,7 +119,7 @@ export async function generatePoster(
   );
 
   // Generate the poster image
-  const imageKey = await generatePosterImage(imageDescription);
+  const imageKey = await generatePosterImage(imageDescription, title, tagline);
 
   connection.send(JSON.stringify({ imageKey }));
   return { imageKey, imageDescription };

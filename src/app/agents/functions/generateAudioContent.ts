@@ -40,8 +40,10 @@ export async function generateAudio(
     const savedAudio = await retryWithExponentialBackoff(
       async () => {
         return await env.R2.put(`mashup-${Date.now()}.mp3`, audioBlob, {
-          httpMetadata: {
+          customMetadata: {
             contentType,
+            title,
+            tagline,
           },
         });
       },
