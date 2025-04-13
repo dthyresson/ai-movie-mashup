@@ -7,7 +7,7 @@ export const Navigation = () => (
         <h1 className="text-2xl font-bold hover:text-neutral-200 transition-colors">
           <a
             href="/"
-            className="font-banner font-black text-md md:text-xl lg:text-2xl sm:text-md hover:text-purple-200 transition-colors flex items-center"
+            className="font-banner font-black text-md md:text-xl lg:text-2xl sm:text-sm hover:text-purple-200 transition-colors flex items-center"
           >
             <img
               src="/favicon.svg"
@@ -15,7 +15,7 @@ export const Navigation = () => (
               className="inline-block h-6 w-6 mr-2 sm:mr-1"
             />
             <span className="hidden sm:inline">Movie Mashups</span>
-            <span className="sm:hidden">Movie Mashups</span>
+            <span className="sm:hidden">Mashups</span>
           </a>
         </h1>
 
