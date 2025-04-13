@@ -14,7 +14,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <title>Movie Mashups</title>
       <meta
         name="description"
-        content="AI Movie Mashups creates mashups of classic movies using AI built with RedwoodSDK and deployed on Cloudflare. It's Pretty Woman neets Die Hard!"
+        content="AI Movie Mashups creates mashups of classic movies using AI built with RedwoodSDK and deployed on Cloudflare. It's Pretty Woman meets Die Hard!"
       />
       <meta
         name="keywords"
