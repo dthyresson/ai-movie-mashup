@@ -10,7 +10,6 @@ interface MovieSelectorProps {
   onSelect: (movieId: string) => void;
   otherSelectedMovie: string | null;
   movies: Movie[];
-  isLoading: boolean;
   error: string | null;
 }
 
@@ -20,7 +19,6 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
   onSelect,
   otherSelectedMovie,
   movies,
-  isLoading,
   error,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,11 +54,9 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
         type="button"
         className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={() => setIsOpen(!isOpen)}
-        disabled={isLoading || !!error}
+        disabled={!!error}
       >
-        {isLoading ? (
-          <span className="text-gray-500">Loading movies...</span>
-        ) : error ? (
+        {error ? (
           <span className="text-red-500">Error loading movies</span>
         ) : selectedMovieObj ? (
           <div className="flex items-center">
@@ -77,7 +73,7 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
         <ChevronDownIcon isOpen={isOpen} />
       </button>
 
-      {isOpen && !isLoading && !error && (
+      {isOpen && !error && (
         <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
           {availableMovies.map((movie) => (
             <div

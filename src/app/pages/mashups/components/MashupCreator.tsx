@@ -11,25 +11,21 @@ import type {
   MessageLog,
 } from "@/app/pages/mashups/components/types";
 import { ErrorDisplay } from "./ErrorDisplay";
-import { getMovies } from "@/app/pages/movies/functions";
 import type { Movie } from "@prisma/client";
 
 import type { NewMashupParams } from "@/app/pages/mashups/NewMashup";
 
-// Cache movies for 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
-let cachedMovies: Movie[] | null = null;
-let lastFetchTime: number | null = null;
+interface MashupCreatorProps extends NewMashupParams {
+  movies: Movie[];
+}
 
 export default function MashupCreator({
   firstMovieId,
   secondMovieId,
-}: NewMashupParams) {
+  movies,
+}: MashupCreatorProps) {
   const [selectedMovie1, setSelectedMovie1] = useState<string | null>(null);
   const [selectedMovie2, setSelectedMovie2] = useState<string | null>(null);
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [isLoadingMovies, setIsLoadingMovies] = useState(true);
-  const [moviesError, setMoviesError] = useState<string | null>(null);
   const [isRandomRoute, setIsRandomRoute] = useState<boolean>(false);
   const [title, setTitle] = useState<string | null>(null);
   const [tagline, setTagline] = useState<string | null>(null);
@@ -159,51 +155,12 @@ export default function MashupCreator({
     }
   }, [selectedMovie1, selectedMovie2, isRandomRoute]);
 
-  // Fetch movies with caching
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        // Check if we have cached movies that are still valid
-        const now = Date.now();
-        if (
-          cachedMovies &&
-          lastFetchTime &&
-          now - lastFetchTime < CACHE_DURATION
-        ) {
-          setMovies(cachedMovies);
-          setIsLoadingMovies(false);
-          return;
-        }
-
-        setIsLoadingMovies(true);
-        const fetchedMovies = await getMovies();
-        cachedMovies = fetchedMovies;
-        lastFetchTime = now;
-        setMovies(fetchedMovies);
-        setMoviesError(null);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-        setMoviesError("Failed to load movies. Please try again.");
-      } finally {
-        setIsLoadingMovies(false);
-      }
-    };
-
-    fetchMovies();
-  }, []);
-
   const handleGenerateMashup = async () => {
     if (!agent.id || !selectedMovie1 || !selectedMovie2) return;
 
     setIsGenerating(true);
     setError(null);
     resetMashup();
-    setIsGenerating(true);
-
-    // Reconnect the WebSocket if it's not already connected
-    // if (agent.readyState === WebSocket.CLOSED) {
-    //   agent.reconnect();
-    // }
 
     agent.send(
       JSON.stringify({
@@ -225,8 +182,7 @@ export default function MashupCreator({
                 onSelect={setSelectedMovie1}
                 otherSelectedMovie={selectedMovie2}
                 movies={movies}
-                isLoading={isLoadingMovies}
-                error={moviesError}
+                error={null}
               />
               <MovieSelector
                 label="Second Movie"
@@ -234,8 +190,7 @@ export default function MashupCreator({
                 onSelect={setSelectedMovie2}
                 otherSelectedMovie={selectedMovie1}
                 movies={movies}
-                isLoading={isLoadingMovies}
-                error={moviesError}
+                error={null}
               />
             </div>
             <div className="w-full lg:w-auto flex justify-center lg:justify-end">
@@ -248,7 +203,6 @@ export default function MashupCreator({
         </div>
 
         {error && <ErrorDisplay message={error} className="mt-4" />}
-        {moviesError && <ErrorDisplay message={moviesError} className="mt-4" />}
 
         <MashupResults
           title={title}
