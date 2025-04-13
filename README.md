@@ -644,7 +644,7 @@ Note: This executes a delete statement on the `Mashup` table in production. See 
 pnpm wrangler d1 execute movie-mashup-db --remote --command="DELETE FROM "Mashup";"
 ```
 
-### Add a new movie to production
+### Add a New Movie to Production
 
 -- Note: This is just an example. You can add a new movie to the database by running the following command.
 -- In development, you can add a new movie to the database with seeding.
@@ -658,6 +658,24 @@ pnpm wrangler d1 execute movie-mashup-db --remote --command="\
     'Something is rotten at the Elsinore Brewery. Bob and Doug McKenzie (as seen on SCTV) help the orphan Pam regain the brewery founded by her recently-deceased father. But to do so, they must confront the suspicious Brewmeister Smith and two teams of vicious hockey players.', \
     '1983-08-26T00:00:00.000Z', \
     'xGycYCOSNCH9aAcvT51NeYyF5nK.jpg' \
+  )"
+```
+
+### Add a New Preset to Production
+
+-- Note: This is just an example. You can add a new preset to the database by running the following command.
+-- In development, you can add a new preset to the database with seeding.
+
+```bash
+pnpm wrangler d1 execute movie-mashup-db --remote --command="\
+  INSERT INTO Preset (id, createdAt, updatedAt, movie1Id, movie2Id, isFavorite) \
+  VALUES ( \
+    'cltxyz123abcdefghijklmnop', \
+    '2025-04-13T02:46:24.197+00:00', \
+    '2025-04-13T02:46:24.197+00:00', \
+    '12921-strange-brew', \
+    '11-star-wars', \
+    false \
   )"
 ```
 

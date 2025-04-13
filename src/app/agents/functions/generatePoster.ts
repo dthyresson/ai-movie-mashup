@@ -24,6 +24,7 @@ const getPosterPrompt = (title: string, tagline: string, plot: string) => {
 
   const assistantPrompt = `
     Important:
+      * Always include that this image is a movie poster and in the style of a movie poster.
       * The description must be 40 words or less.
       * Make sure the poster title is the provided title.
       * Make sure the poster tagline is the provided tagline.
