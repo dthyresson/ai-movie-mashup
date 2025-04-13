@@ -99,11 +99,11 @@ export default function MashupCreator({
       console.log("WebSocket connection closed");
       if (code === 1011) {
         setError(
-          "Sorry, something went wrong when generating the mashup. Please try again.",
+          "Sorry, something went wrong when generating the mashup. Please try again. Imvalid format.",
         );
       } else if (code === 2011) {
         setError(
-          "Sorry, something went wrong when generating the mashup. Please try again.",
+          "Sorry, something went wrong when generating the mashup. Please try again. Error parsing message.",
         );
       } else {
         setError("Sorry, there was a connection error. Please try again.");

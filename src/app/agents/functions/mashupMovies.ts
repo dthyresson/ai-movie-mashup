@@ -11,6 +11,7 @@ import {
   generateMediaContent,
   createMashupInDb,
 } from "./index";
+import { setupDb } from "@/db";
 
 /**
  * Function to pick movies and generate mashup content
@@ -20,6 +21,8 @@ export const mashupMovies = async (
   movie1: string,
   movie2: string,
 ) => {
+  await setupDb(env);
+
   console.log("Mashing movies:", movie1, movie2);
 
   const workersai = createWorkersAI({
