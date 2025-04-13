@@ -31,6 +31,13 @@ export class MashupAgent extends Agent<Env> {
   // Message can be string, ArrayBuffer, or ArrayBufferView
   async onMessage(connection: Connection, message: string) {
     // Handle incoming messages
+    // In this case, we are expecting a message with two movie ids
+    // to start the mashup process
+
+    let parsedMessage = {
+      movie1: "",
+      movie2: "",
+    };
     try {
       const messageSchema = z.object({
         movie1: z.string(),
@@ -38,16 +45,10 @@ export class MashupAgent extends Agent<Env> {
       });
 
       try {
-        const parsedMessage = messageSchema.parse(JSON.parse(message));
+        parsedMessage = messageSchema.parse(JSON.parse(message));
 
         console.log(
           `Selected movies: ${parsedMessage.movie1} and ${parsedMessage.movie2}`,
-        );
-
-        await mashupMovies(
-          connection,
-          parsedMessage.movie1,
-          parsedMessage.movie2,
         );
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -62,8 +63,18 @@ export class MashupAgent extends Agent<Env> {
         return;
       }
     } catch (error) {
-      console.error("Error parsing message:", error);
+      console.error("Error parsing message to start mashup:", error);
       connection.close(2011, "Error parsing message");
+    }
+    try {
+      await mashupMovies(
+        connection,
+        parsedMessage.movie1,
+        parsedMessage.movie2,
+      );
+    } catch (error) {
+      console.error("Error during mashup:", error);
+      connection.close(2012, "Error during mashup");
     }
   }
 

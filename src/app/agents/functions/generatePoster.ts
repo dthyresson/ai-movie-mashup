@@ -6,6 +6,7 @@ import {
   DEFAULT_GATEWAY_ID,
   base64ToBlob,
 } from "./index";
+import { retryWithExponentialBackoff } from "./helpers";
 
 const getPosterPrompt = (title: string, tagline: string, plot: string) => {
   const systemPrompt = `
@@ -16,6 +17,7 @@ const getPosterPrompt = (title: string, tagline: string, plot: string) => {
 
     Important:
       * The description cannot contain violence, gore, or any other content that is not suitable for a movie poster.
+      * Never include NSFW content.
       * Only return the description of the movie poster with no other text.
       * Include the title and tagline in the poster description if you think it is appropriate.
   `;
@@ -38,29 +40,48 @@ const getPosterPrompt = (title: string, tagline: string, plot: string) => {
 
 // Function to generate the poster image
 export async function generatePosterImage(prompt: string) {
-  const { image } = await env.AI.run(
-    IMAGE_GENERATION_MODEL,
-    {
-      prompt,
-    },
-    {
-      gateway: {
-        id: DEFAULT_GATEWAY_ID,
+  try {
+    const { image } = await retryWithExponentialBackoff(
+      async () => {
+        return await env.AI.run(
+          IMAGE_GENERATION_MODEL,
+          {
+            prompt,
+          },
+          {
+            gateway: {
+              id: DEFAULT_GATEWAY_ID,
+            },
+          },
+        );
       },
-    },
-  );
+      3, // maxRetries
+      1000, // initialDelay
+      10000, // maxDelay
+    );
 
-  const contentType = "image/jpeg";
-  const blob = base64ToBlob(image || "", contentType);
+    const contentType = "image/jpeg";
+    const blob = base64ToBlob(image || "", contentType);
 
-  // Upload to R2 bucket
-  const savedImage = await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
-    httpMetadata: {
-      contentType,
-    },
-  });
+    // Upload to R2 bucket
+    const savedImage = await retryWithExponentialBackoff(
+      async () => {
+        return await env.R2.put(`mashup-${Date.now()}.jpg`, blob, {
+          httpMetadata: {
+            contentType,
+          },
+        });
+      },
+      3,
+      1000,
+      10000,
+    );
 
-  return savedImage.key;
+    return savedImage.key;
+  } catch (error) {
+    console.error("Error generating poster:", error);
+    return "poster-error-key";
+  }
 }
 
 /**

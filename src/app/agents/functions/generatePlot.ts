@@ -20,6 +20,7 @@ const getMashupPlotPrompt = (
     Important:
     
     * Just return a new plot summary
+    * Never include NSFW content.
 `;
 
   const userPrompt = `

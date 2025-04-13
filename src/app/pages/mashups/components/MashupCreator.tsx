@@ -105,6 +105,10 @@ export default function MashupCreator({
         setError(
           "Sorry, something went wrong when generating the mashup. Please try again. Error parsing message.",
         );
+      } else if (code === 2012) {
+        setError(
+          "Sorry, something went wrong when generating the mashup. Please try again. Error during mashup.",
+        );
       } else {
         setError("Sorry, there was a connection error. Please try again.");
       }

@@ -47,3 +47,40 @@ export async function streamAndReturnCompleteText(
 
   return await text;
 }
+
+/**
+ * Retries a function with exponential backoff
+ * @param fn The async function to retry
+ * @param maxRetries Maximum number of retries
+ * @param initialDelay Initial delay in milliseconds
+ * @param maxDelay Maximum delay in milliseconds
+ * @returns The result of the function if successful
+ * @throws The last error if all retries fail
+ */
+export async function retryWithExponentialBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  initialDelay: number = 1_300,
+  maxDelay: number = 10_000,
+): Promise<T> {
+  let retries = 0;
+  let delay = initialDelay;
+
+  while (true) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (retries >= maxRetries) {
+        throw error;
+      }
+
+      // Calculate next delay with exponential backoff and jitter
+      const jitter = Math.random() * 0.1 * delay; // Add 10% jitter
+      delay = Math.min(delay * 2 + jitter, maxDelay);
+      retries++;
+
+      // Wait before retrying
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
