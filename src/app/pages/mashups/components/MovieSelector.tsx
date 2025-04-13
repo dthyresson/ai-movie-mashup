@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { getMovies } from "@/app/pages/movies/functions";
 import type { Movie } from "@prisma/client";
 import { ChevronDownIcon, CheckIcon } from "./icons";
 
@@ -10,6 +9,9 @@ interface MovieSelectorProps {
   selectedMovie: string | null;
   onSelect: (movieId: string) => void;
   otherSelectedMovie: string | null;
+  movies: Movie[];
+  isLoading: boolean;
+  error: string | null;
 }
 
 export const MovieSelector: React.FC<MovieSelectorProps> = ({
@@ -17,18 +19,12 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
   selectedMovie,
   onSelect,
   otherSelectedMovie,
+  movies,
+  isLoading,
+  error,
 }) => {
-  const [movies, setMovies] = useState<Movie[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      const fetchedMovies = await getMovies();
-      setMovies(fetchedMovies);
-    };
-    fetchMovies();
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -58,10 +54,15 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
       </label>
       <button
         type="button"
-        className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex items-center justify-between"
+        className="w-full p-2 border border-gray-300 rounded-md bg-white text-left flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={() => setIsOpen(!isOpen)}
+        disabled={isLoading || !!error}
       >
-        {selectedMovieObj ? (
+        {isLoading ? (
+          <span className="text-gray-500">Loading movies...</span>
+        ) : error ? (
+          <span className="text-red-500">Error loading movies</span>
+        ) : selectedMovieObj ? (
           <div className="flex items-center">
             <img
               src={`https://image.tmdb.org/t/p/w500/${selectedMovieObj.photo}`}
@@ -76,7 +77,7 @@ export const MovieSelector: React.FC<MovieSelectorProps> = ({
         <ChevronDownIcon isOpen={isOpen} />
       </button>
 
-      {isOpen && (
+      {isOpen && !isLoading && !error && (
         <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
           {availableMovies.map((movie) => (
             <div
