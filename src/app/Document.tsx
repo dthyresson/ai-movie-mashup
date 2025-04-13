@@ -1,3 +1,5 @@
+import stylesUrl from "./styles.css?url";
+
 import { TurnstileScript } from "@redwoodjs/sdk/turnstile";
 import { Navigation } from "./shared/Navigation";
 import { Footer } from "./shared/Footer";
@@ -13,7 +15,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <TurnstileScript />
       <script type="module" src="/src/client.tsx"></script>
-      <link rel="stylesheet" href="/src/app.css" />
+      <link rel="stylesheet" href={stylesUrl} />
     </head>
     <body className="flex flex-col min-h-screen">
       <main className="flex flex-col flex-grow">

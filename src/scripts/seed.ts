@@ -11,7 +11,6 @@ export default defineScript(async ({ env }) => {
     DELETE FROM Mashup;
     DELETE FROM Preset;
     DELETE FROM Movie;
-    DELETE FROM sqlite_sequence;
   `);
 
   await db.user.create({
