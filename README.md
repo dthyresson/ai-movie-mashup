@@ -615,6 +615,52 @@ To deploy to Cloudflare:
 pnpm release
 ```
 
+Prerequisites:
+
+- Have a Cloudflare account
+- Have a Cloudflare R2 bucket
+- Have a Cloudflare D1 database
+- Have a Cloudflare AI Gateway
+- Have a Cloudflare AI
+- All properly configured in the Cloudflare dashboard and bound to the worker in the `wrangler.jsonc` file
+- Paid accounts preferred due to the charges for the AI models, Gateway, and R2
+
+#### Populate the Database
+
+Use wrangler to populate the database with the data in the `data` folder.
+
+Note: This is just for initial population in production. See the "--remote" flag below.
+
+```bash
+pnpm wrangler d1 execute movie-mashup-db --remote --file=./data/movies.sql
+pnpm wrangler d1 execute movie-mashup-db --remote --file=./data/presets.sql
+```
+
+### Reset Mashups
+
+Note: This executes a delete statement on the `Mashup` table in production. See the "--remote" flag below.
+
+```bash
+pnpm wrangler d1 execute movie-mashup-db --remote --command="DELETE FROM "Mashup";"
+```
+
+### Add a new movie to production
+
+-- Note: This is just an example. You can add a new movie to the database by running the following command.
+-- In development, you can add a new movie to the database with seeding.
+
+```bash
+pnpm wrangler d1 execute movie-mashup-db --remote --command="\
+  INSERT INTO Movie (id, title, overview, releaseDate, photo) \
+  VALUES ( \
+    '12921-strange-brew', \
+    'Strange Brew', \
+    'Something is rotten at the Elsinore Brewery. Bob and Doug McKenzie (as seen on SCTV) help the orphan Pam regain the brewery founded by her recently-deceased father. But to do so, they must confront the suspicious Brewmeister Smith and two teams of vicious hockey players.', \
+    '1983-08-26T00:00:00.000Z', \
+    'xGycYCOSNCH9aAcvT51NeYyF5nK.jpg' \
+  )"
+```
+
 ## Contributing
 
 1. Fork the repository
