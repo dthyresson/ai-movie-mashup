@@ -21,6 +21,28 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         content="AI, Movie, Mashups, Movies, Mashup, AI Movie Mashups, AI Movie Mashup, AI Movie Mashup Generator, AI Movie Mashup Creator, AI Movie Mashup Maker, AI Movie Mashup Editor, AI Movie Mashup Generator, AI Movie Mashup Creator, AI Movie Mashup Maker, AI Movie Mashup Editor, RedwoodSDK"
       />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/apple-touch-icon.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/favicon-32x32.png"
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="/favicon-16x16.png"
+      />
+      <link rel="manifest" href="/site.webmanifest" />
+      <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+      <meta name="msapplication-TileColor" content="#da532c" />
+      <meta name="theme-color" content="#ffffff" />
       <TurnstileScript />
       <script type="module" src="/src/client.tsx"></script>
       <link rel="stylesheet" href={stylesUrl} />
