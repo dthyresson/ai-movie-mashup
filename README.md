@@ -338,7 +338,7 @@ The application uses a single `MashupAgent` to handle the entire movie mashup ge
 
 ### MashupAgent
 
-The `MashupAgent` is a stateful agent that:
+The `MashupAgent` is an agent that:
 
 - Maintains WebSocket connections with clients
 - Processes movie selection requests
@@ -349,6 +349,8 @@ The `MashupAgent` is a stateful agent that:
   4. Media generation (poster and audio)
 - Handles error cases and connection lifecycle
 - Manages the streaming of generated content back to clients
+- Is a Durable Object
+- Needs to be setup with the db so that it can use it in onStart because it is a Durable Object and not a worker
 
 ### Mashup Creator UI Components
 
@@ -525,6 +527,8 @@ The `seed.ts` script will:
    - It ensures all referenced movies exist
    - It maintains data integrity in the database
 
+Note: This is just for development. In production, the database is populated via wrangler scripts. See the [Populate the Database](#populate-the-database) section below.
+
 ## Getting Started
 
 ### Prerequisites
@@ -575,7 +579,7 @@ This will:
 - Running migrations...
 - Seeding database...
 
-It is imporant as it will ensurwe all rhe Worker bindings from `wrangler.jsonc` are setup.
+It is imporant as it will ensurwe all the Worker bindings from `wrangler.jsonc` are setup.
 
 5. Initialize the database:
 
@@ -630,6 +634,8 @@ Prerequisites:
 Use wrangler to populate the database with the data in the `data` folder.
 
 Note: This is just for initial population in production. See the "--remote" flag below.
+
+Also, if you want to add new movies or presets, see the [Add a New Movie to Production](#add-a-new-movie-to-production) and [Add a New Preset to Production](#add-a-new-preset-to-production) sections below.
 
 ```bash
 pnpm wrangler d1 execute movie-mashup-db --remote --file=./data/movies.sql
