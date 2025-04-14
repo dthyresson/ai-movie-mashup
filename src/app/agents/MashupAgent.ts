@@ -2,6 +2,11 @@ import { z } from "zod";
 import { Agent, unstable_callable as callable } from "agents";
 import type { Connection, ConnectionContext } from "agents";
 
+// Because this is runs in an agent which is a Durableand not a worker, we need to import the db setup
+// so that it is available to the agent.
+import { setupDb } from "@/db";
+import { env } from "cloudflare:workers";
+
 import { mashupMovies } from "./functions/index";
 
 // The core class for creating Agents that can maintain state, orchestrate
@@ -9,9 +14,10 @@ import { mashupMovies } from "./functions/index";
 // Agents.
 export class MashupAgent extends Agent<Env> {
   // Called when a new Agent instance starts or wakes from hibernation
-  // async onStart() {
-  //   console.log("Agent started with state:", this.state);
-  // }
+  async onStart() {
+    console.log("Agent started with state:", this.state);
+    await setupDb(env);
+  }
 
   // Handle HTTP requests coming to this Agent instance
   // Returns a Response object
@@ -33,11 +39,11 @@ export class MashupAgent extends Agent<Env> {
     // Handle incoming messages
     // In this case, we are expecting a message with two movie ids
     // to start the mashup process
-
     let parsedMessage = {
       movie1: "",
       movie2: "",
     };
+
     try {
       const messageSchema = z.object({
         movie1: z.string(),
