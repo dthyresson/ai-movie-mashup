@@ -31,11 +31,11 @@ export const Navigation = () => (
               <PlusCircle className="w-4 h-4" />
               <span>New</span>
             </a>
-            <div className="relative group">
-              <button
-                type="button"
-                className="p-2 rounded-md hover:bg-purple-700 transition-colors"
-                aria-label="Toggle menu"
+            <div className="relative">
+              <input type="checkbox" id="mobile-menu" className="hidden peer" />
+              <label
+                htmlFor="mobile-menu"
+                className="p-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer block"
               >
                 <svg
                   width="24"
@@ -51,8 +51,8 @@ export const Navigation = () => (
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
-              </button>
-              <div className="font-banner absolute right-0 mt-2 w-48 bg-purple-800 rounded-md shadow-lg py-1 hidden group-hover:block hover:block before:absolute before:h-2 before:w-full before:-top-2 before:left-0">
+              </label>
+              <div className="font-banner absolute right-0 mt-2 w-48 bg-purple-800 rounded-md shadow-lg py-1 hidden peer-checked:block">
                 <a
                   href={link("/mashups")}
                   className="px-4 py-3 hover:bg-purple-700 transition-colors flex items-center gap-2"
