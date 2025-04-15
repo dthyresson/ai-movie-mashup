@@ -99,11 +99,11 @@ The application uses several request handlers to manage different aspects of the
 
 - `/mashups` - Main mashups page
 - `/mashups/page/:page` - Paginated mashups
-- `/mashups/view/:id` - View a specific mashup
 - `/mashups/new` - Create a new mashup
 - `/mashups/new/:firstMovieId` - Create mashup with first movie selected
 - `/mashups/new/:firstMovieId/:secondMovieId` - Create mashup with both movies selected
 - `/mashups/random-mashup` - Generate a random movie combination mashup
+- `/mashups/:id` - View a specific mashup
 
 ### API Routes
 

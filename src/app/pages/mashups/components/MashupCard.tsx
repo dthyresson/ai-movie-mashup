@@ -24,7 +24,7 @@ export function MashupCard({
 }: MashupCardProps) {
   return (
     <div className="font-screenwriter bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 hover:scale-105 hover:cursor-pointer">
-      <a href={link("/mashups/view/:id", { id })} className="block">
+      <a href={link("/mashups/:id", { id })} className="block">
         <div className="aspect-w-16 aspect-h-9">
           <img
             src={`/api/mashups/${id}/poster`}
