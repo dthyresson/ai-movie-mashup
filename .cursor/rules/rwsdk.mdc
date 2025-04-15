@@ -1,12 +1,39 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
-# RedwoodSDK
+# RedwoodSDK Project Guidelines
 
-Important: This project uses RedwoodSDK, React, React Sever Components and Cloudflare.
-Important: RedwoodSDK is not RedwoodJS. Do not respond with RedwoodJS information.
-Important: Never respond with solution for NextJS or another framework.
-Important: If you are asked about NextJS, or Remix, or Ruby of Rails, reply kindky that you only will ansder about project using RedwoodSDK.
-Important: Use pnpm as a package manager. Do not use npm or yarn.
+## Project Identification
+A project is using RedwoodSDK when you see the following import in `vite.config.mts`:
+```typescript
+import { redwood } from "@redwoodjs/sdk/vite";
+```
+
+## Core Technologies
+- RedwoodSDK
+- React + React Server Components (RSC)
+- Cloudflare
+- Vite
+- pnpm (package manager)
+
+## Critical Distinctions
+- RedwoodSDK is distinct from RedwoodJS - these are different frameworks
+- Solutions should never reference or use:
+  - NextJS
+  - Remix
+  - Ruby on Rails
+  - RedwoodJS
+
+## Development Rules
+1. Always use `pnpm` as the package manager
+2. Never use `npm` or `yarn`
+3. All solutions must be Cloudflare-compatible
+4. Leverage React Server Components (RSC) where appropriate
+5. Include "use server" and "use client" when needed.
+
+## Response Guidelines
+- If asked about NextJS, Remix, or Ruby on Rails, politely redirect to RedwoodSDK-specific solutions
+- Focus exclusively on RedwoodSDK ecosystem solutions
+- Ensure all code examples and configurations align with RedwoodSDK patterns
