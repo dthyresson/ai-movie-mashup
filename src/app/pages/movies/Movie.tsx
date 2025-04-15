@@ -33,50 +33,56 @@ export async function Movie({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto px-4 py-8">
       <Metadata id={movie.id} title={title} tagline={movie.overview} />
-      <div className="font-screenwriter w-full mx-auto p-6 bg-purple-50 rounded-lg shadow-lg">
+      <div className="font-screenwriter w-full mx-auto p-4 sm:p-6 bg-purple-50 rounded-lg shadow-lg">
         {/* Movie Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-neutral-800 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-2">
             {movie.title} {releaseYear && `(${releaseYear})`}
           </h1>
         </div>
 
         {/* Movie Details Layout */}
-        <div className="flex flex-row mb-8 space-x-8">
+        <div className="flex flex-col md:flex-row mb-6 md:mb-8 md:space-x-8 space-y-6 md:space-y-0">
           {/* Left column: Poster */}
-          <img
-            src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
-            alt={movie.title}
-            className="w-auto h-72 object-fit rounded-lg p-2 border-2 border-neutral-300"
-          />
+          <div className="flex justify-center md:justify-start">
+            <img
+              src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
+              alt={movie.title}
+              className="w-auto max-h-72 object-contain rounded-lg p-2 border-2 border-neutral-300"
+            />
+          </div>
 
           {/* Right column: Overview */}
-          <p className="text-xl text-gray-900 leading-relaxed mb-6">
+          <p className="text-lg md:text-xl text-gray-900 leading-relaxed">
             {movie.overview}
           </p>
         </div>
 
         {/* Mashups Section */}
-        <div className="mt-12">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-banner font-bold">Mashups</h2>
+        <div className="mt-8 sm:mt-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-banner font-bold">
+              Mashups
+            </h2>
             <a
               href={link("/mashups/new/:firstMovieId", {
                 firstMovieId: movie.id,
               })}
-              className="inline-flex items-center px-6 py-3 text-lg font-banner font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors shadow-md hover:shadow-lg"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 text-base sm:text-lg font-banner font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors shadow-md hover:shadow-lg"
             >
               <span>New Mashup</span>
-              <span className="text-purple-200 ml-2">with {movie.title}</span>
+              <span className="text-purple-200 ml-2 hidden sm:inline">
+                with {movie.title}
+              </span>
             </a>
           </div>
 
           {allMashups.length === 0 ? (
-            <p className="font-banner text-center text-gray-500 text-xl mt-12">
+            <p className="font-banner text-center text-gray-500 text-lg sm:text-xl mt-8 sm:mt-12">
               No mashups found for this movie yet. Be the first to create one!
             </p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {allMashups.map((mashup: MashupWithMovies) => (
                 <div
                   key={mashup.id}
@@ -89,8 +95,8 @@ export async function Movie({ params }: { params: { id: string } }) {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  <div className="p-3 sm:p-4">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">
                       <a href={link("/mashups/:id", { id: mashup.id })}>
                         {mashup.title}
                       </a>
@@ -98,9 +104,9 @@ export async function Movie({ params }: { params: { id: string } }) {
                     <p className="text-sm text-gray-600 italic mb-3">
                       {mashup.tagline}
                     </p>
-                    <div className="flex justify-between items-center space-x-2">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                       {mashup.audioKey && (
-                        <div className="mt-3">
+                        <div className="w-full sm:flex-1">
                           <audio
                             src={`/api/mashups/${mashup.id}/audio`}
                             controls

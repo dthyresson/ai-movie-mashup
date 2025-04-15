@@ -47,9 +47,14 @@ import { redwood } from "@redwoodjs/sdk/vite";
     - `styles/` - CSS and Tailwind styles
     - `lib/` - Shared utilities and helpers
   - `public/` - Static assets
-  - `functions/` - Cloudflare Workers
   - `api/` - API routes and handlers
   - `db/` - Database schemas and migrations
+
+## UI
+
+- Use Tailwind CSS for styling
+- Always make components responsive
+
 
 ### Best Practices
 - Leverage React Server Components when possible
