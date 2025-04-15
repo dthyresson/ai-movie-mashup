@@ -5,35 +5,79 @@ alwaysApply: false
 ---
 # RedwoodSDK Project Guidelines
 
-## Project Identification
-A project is using RedwoodSDK when you see the following import in `vite.config.mts`:
+## Overview
+RedwoodSDK is a Vite plugin that enables modern web development with React Server Components and Cloudflare integration. Projects using RedwoodSDK can be identified by the following import in `vite.config.mts`:
+
 ```typescript
 import { redwood } from "@redwoodjs/sdk/vite";
 ```
 
 ## Core Technologies
-- RedwoodSDK
+- RedwoodSDK (Vite plugin)
 - React + React Server Components (RSC)
-- Cloudflare
-- Vite
-- pnpm (package manager)
+- Cloudflare Platform (Workers, Pages, D1, R2)
+- Vite Build Tool
+- TypeScript (required for best developer experience)
+- TanStack Router (recommended for routing)
+- Tailwind CSS (recommended for styling)
 
-## Critical Distinctions
-- RedwoodSDK is distinct from RedwoodJS - these are different frameworks
-- Solutions should never reference or use:
+## Important Guidelines
+
+### Package Management
+- Use `pnpm` exclusively as the package manager
+- Do not use npm or yarn
+- Always maintain a `pnpm-lock.yaml` file
+- Use `pnpm dlx` instead of `npx` for one-off commands
+
+### Framework Specifics
+- RedwoodSDK is distinct from RedwoodJS - they are separate frameworks
+- Do not apply patterns or solutions from other frameworks like:
   - NextJS
   - Remix
   - Ruby on Rails
   - RedwoodJS
+- Use RSC patterns and Server Actions where appropriate
+- Leverage Cloudflare's edge runtime capabilities
 
-## Development Rules
-1. Always use `pnpm` as the package manager
-2. Never use `npm` or `yarn`
-3. All solutions must be Cloudflare-compatible
-4. Leverage React Server Components (RSC) where appropriate
-5. Include "use server" and "use client" when needed.
+### Project Structure
+- Follow the conventional RedwoodSDK directory structure:
+  - `app/` - Application source code
+    - `components/` - React components
+    - `routes/` - TanStack Router definitions
+    - `styles/` - CSS and Tailwind styles
+    - `lib/` - Shared utilities and helpers
+  - `public/` - Static assets
+  - `functions/` - Cloudflare Workers
+  - `api/` - API routes and handlers
+  - `db/` - Database schemas and migrations
 
-## Response Guidelines
-- If asked about NextJS, Remix, or Ruby on Rails, politely redirect to RedwoodSDK-specific solutions
-- Focus exclusively on RedwoodSDK ecosystem solutions
-- Ensure all code examples and configurations align with RedwoodSDK patterns
+### Best Practices
+- Leverage React Server Components when possible
+- Follow TypeScript strict mode and best practices
+- Implement proper error boundaries and loading states
+- Use Cloudflare-specific features appropriately:
+  - D1 for SQL databases
+  - R2 for object storage
+  - KV for key-value storage
+  - Durable Objects for coordination
+- Implement proper caching strategies
+- Use environment variables for configuration
+- Follow security best practices:
+  - Validate all user inputs
+  - Implement proper CORS policies
+  - Use secure headers
+  - Handle secrets appropriately
+
+### Development Workflow
+- Use `pnpm dev` for local development
+- Test thoroughly in dev mode before deployment
+- Use `pnpm build` for production builds
+- Leverage Cloudflare Pages for deployment
+- Implement proper CI/CD practices
+
+### Response Policy
+If asked about other frameworks or technologies:
+- Politely explain that this project uses RedwoodSDK
+- Direct users to RedwoodSDK-specific solutions
+- Maintain focus on RedwoodSDK ecosystem best practices
+- Provide context about why RedwoodSDK is the appropriate choice
