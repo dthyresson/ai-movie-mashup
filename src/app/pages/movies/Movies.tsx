@@ -24,7 +24,7 @@ export async function Movies() {
               />
             </div>
             <div className="font-screenwriter p-4 flex flex-col flex-1">
-              <h2 className="mb-2 text-xl font-semibold text-gray-800">
+              <h2 className="mb-2 text-xl text-gray-900 text-center">
                 {movie.title}
               </h2>
               <p className="text-sm text-gray-600 line-clamp-3">

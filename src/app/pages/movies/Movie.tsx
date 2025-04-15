@@ -26,9 +26,8 @@ export async function Movie({ params }: { params: { id: string } }) {
   const releaseYear = movie.releaseDate
     ? new Date(movie.releaseDate).getFullYear()
     : null;
-  const title = `${movie.title} ${
-    releaseYear ? `(${releaseYear})` : ""
-  } Mashups`;
+  const title = `${movie.title} ${releaseYear ? `(${releaseYear})` : ""
+    } Mashups`;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -44,13 +43,12 @@ export async function Movie({ params }: { params: { id: string } }) {
         {/* Movie Details Layout */}
         <div className="flex flex-col md:flex-row mb-6 md:mb-8 md:space-x-8 space-y-6 md:space-y-0">
           {/* Left column: Poster */}
-          <div className="flex justify-center md:justify-start">
-            <img
-              src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
-              alt={movie.title}
-              className="w-auto max-h-72 object-contain rounded-lg p-2 border-2 border-neutral-300"
-            />
-          </div>
+          <img
+            src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
+            alt={movie.title}
+            className="w-auto max-h-72 object-cover rounded-lg p-2 border-2 border-neutral-300"
+          />
+
 
           {/* Right column: Overview */}
           <p className="text-lg md:text-xl text-gray-900 leading-relaxed">
@@ -142,6 +140,6 @@ export async function Movie({ params }: { params: { id: string } }) {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
