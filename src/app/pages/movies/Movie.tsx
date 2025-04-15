@@ -109,7 +109,14 @@ export async function Movie({ params }: { params: { id: string } }) {
                         </div>
                       )}
                       <div className="font-banner text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
-                        <a href={link("/movies/:id", { id: movie.id })}>
+                        <a
+                          href={link("/movies/:id", {
+                            id:
+                              mashup.movie1Id === movie.id
+                                ? mashup.movie2.id
+                                : mashup.movie1.id,
+                          })}
+                        >
                           {mashup.movie1Id === movie.id
                             ? mashup.movie2.title
                             : mashup.movie1.title}
