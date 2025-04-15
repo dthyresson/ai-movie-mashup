@@ -98,23 +98,25 @@ export async function Movie({ params }: { params: { id: string } }) {
                     <p className="text-sm text-gray-600 italic mb-3">
                       {mashup.tagline}
                     </p>
-                    <p className="text-sm text-gray-500 mb-3">
-                      Mashed with:{" "}
-                      <span className="font-semibold">
-                        {mashup.movie1Id === movie.id
-                          ? mashup.movie2.title
-                          : mashup.movie1.title}
-                      </span>
-                    </p>
-                    {mashup.audioKey && (
-                      <div className="mt-3">
-                        <audio
-                          src={`/api/mashups/${mashup.id}/audio`}
-                          controls
-                          className="w-full"
-                        />
+                    <div className="flex justify-between items-center space-x-2">
+                      {mashup.audioKey && (
+                        <div className="mt-3">
+                          <audio
+                            src={`/api/mashups/${mashup.id}/audio`}
+                            controls
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                      <div className="font-banner text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
+                        <a href={link("/movies/:id", { id: movie.id })}>
+                          {mashup.movie1Id === movie.id
+                            ? mashup.movie2.title
+                            : mashup.movie1.title}
+                        </a>
                       </div>
-                    )}
+                    </div>
+
                     {mashup.status !== "COMPLETED" && (
                       <p className="mt-2 text-sm text-amber-600">
                         Status: {mashup.status}

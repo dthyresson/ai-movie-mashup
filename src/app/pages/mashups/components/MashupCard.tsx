@@ -1,6 +1,6 @@
-import React from "react";
 import { link } from "@/app/shared/links";
 interface Movie {
+  id: string;
   title: string;
   photo: string;
 }
@@ -37,21 +37,27 @@ export function MashupCard({
             {title}
           </h2>
           <p className="text-lg italic text-gray-600 mb-2 line-clamp-1">
-            "{tagline}"
+            {tagline}
           </p>
           <p className="text-gray-700 text-sm line-clamp-3 text-left">{plot}</p>
-          <div className="mt-4 flex justify-between items-center">
-            <div className="flex space-x-2">
-              <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
-                {movie1.title}
-              </span>
-              <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
-                {movie2.title}
-              </span>
-            </div>
-          </div>
         </div>
       </a>
+      <div className="mt-4 flex justify-between items-center p-4">
+        <audio
+          src={`/api/mashups/${id}/audio`}
+          controls
+          className="w-auto h-8"
+          preload="none"
+        />
+        <div className="flex space-x-2">
+          <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
+            <a href={link("/movies/:id", { id: movie1.id })}>{movie1.title}</a>
+          </span>
+          <span className="font-sans text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded text-center">
+            <a href={link("/movies/:id", { id: movie2.id })}>{movie2.title}</a>
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
