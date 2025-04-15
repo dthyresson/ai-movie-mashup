@@ -9,21 +9,21 @@ export async function Movies() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-3xl font-banner font-bold">Movies</h1>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {movies.map((movie) => (
           <a
             key={movie.id}
             href={link("/movies/:id", { id: movie.id })}
-            className="block overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-105"
+            className="overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-105 flex flex-col"
           >
-            <div className="aspect-[2/3] w-full">
+            <div className="aspect-auto w-full">
               <img
                 src={`https://image.tmdb.org/t/p/w500/${movie.photo}`}
                 alt={movie.title}
-                className="h-full w-full object-cover"
+                className="h-72 w-full object-cover"
               />
             </div>
-            <div className="p-4">
+            <div className="font-screenwriter p-4 flex flex-col flex-1">
               <h2 className="mb-2 text-xl font-semibold text-gray-800">
                 {movie.title}
               </h2>
@@ -31,8 +31,7 @@ export async function Movies() {
                 {movie.overview}
               </p>
               {movie.releaseDate && (
-                <p className="mt-2 text-sm text-gray-500">
-                  Released:{" "}
+                <p className="mt-auto pt-3 text-sm text-gray-500 text-right">
                   {new Date(movie.releaseDate).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
