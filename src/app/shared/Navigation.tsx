@@ -1,4 +1,5 @@
 import { link } from "./links";
+import { Film, Clapperboard, Palette, PlusCircle } from "lucide-react";
 
 export const Navigation = () => (
   <nav className="bg-gradient-to-r from-purple-800 to-purple-900 text-white shadow-lg border-b-2 border-neutral-900 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
@@ -20,29 +21,41 @@ export const Navigation = () => (
         </h1>
 
         <nav className="font-banner">
-          <ul className="flex space-x-6 text-sm md:text-lg lg:text-lg">
+          <ul className="flex space-x-2 lg:space-x-4 text-sm md:text-lg lg:text-lg">
             <li>
               <a
                 href={link("/mashups")}
-                className="hover:text-purple-700 font-bold transition-colors  bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                All
+                <Clapperboard className="w-4 h-4 md:w-5 md:h-5" />
+                <span>Mashups</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href={link("/movies")}
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md flex items-center gap-2"
+              >
+                <Film className="w-4 h-4 md:w-5 md:h-5" />
+                <span>Movies</span>
               </a>
             </li>
             <li>
               <a
                 href={link("/presets")}
-                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                Presets
+                <Palette className="w-4 h-4 md:w-5 md:h-5" />
+                <span>Presets</span>
               </a>
             </li>
             <li>
               <a
                 href={link("/mashups/new")}
-                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md"
+                className="hover:text-purple-700 font-bold transition-colors bg-purple-400 px-4 py-2 rounded-md flex items-center gap-2"
               >
-                New
+                <PlusCircle className="w-4 h-4 md:w-5 md:h-5" />
+                <span>New</span>
               </a>
             </li>
           </ul>

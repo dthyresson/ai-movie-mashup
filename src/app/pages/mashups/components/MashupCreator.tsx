@@ -40,7 +40,7 @@ export default function MashupCreator({
 
   const updateStreamingState = (
     setter: React.Dispatch<React.SetStateAction<string | null>>,
-    newContent: string,
+    newContent: string
   ) => {
     setter((prev) => (prev ?? "") + newContent);
   };
@@ -105,15 +105,15 @@ export default function MashupCreator({
       console.log("WebSocket connection closed");
       if (code === 1011) {
         setError(
-          "Sorry, something went wrong when generating the mashup. Please try again.",
+          "Sorry, something went wrong when generating the mashup. Please try again."
         );
       } else if (code === 2011) {
         setError(
-          "Sorry, something went wrong when generating the mashup. Please try again. Error parsing message.",
+          "Sorry, something went wrong when generating the mashup. Please try again. Error parsing message."
         );
       } else if (code === 2012) {
         setError(
-          "Sorry, something went wrong when generating the mashup. Please try again. Error during mashup.",
+          "Sorry, something went wrong when generating the mashup. Please try again. Error during mashup."
         );
       } else {
         setError("Sorry, there was a connection error. Please try again.");
@@ -142,6 +142,13 @@ export default function MashupCreator({
   }, [firstMovieId, secondMovieId]);
 
   useEffect(() => {
+    // Auto-start mashup if both IDs are provided
+    if (firstMovieId) {
+      setSelectedMovie1(firstMovieId);
+    }
+  }, [firstMovieId]);
+
+  useEffect(() => {
     // Auto-generate only if coming from random route
     if (
       isRandomRoute &&
@@ -166,7 +173,7 @@ export default function MashupCreator({
       JSON.stringify({
         movie1: selectedMovie1,
         movie2: selectedMovie2,
-      }),
+      })
     );
   };
 

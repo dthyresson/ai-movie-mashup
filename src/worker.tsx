@@ -15,6 +15,7 @@ import type { User } from "@prisma/client";
 import { apiRoutes } from "@/app/api/routes";
 import { mashupRoutes } from "@/app/pages/mashups/routes";
 import { agentRoutes } from "@/app/agents/routes";
+import { movieRoutes } from "@/app/pages/movies/routes";
 
 export { SessionDurableObject } from "./session/durableObject";
 export { MashupAgent } from "@/app/agents/MashupAgent";
@@ -57,6 +58,7 @@ export default defineApp([
   render(Document, [
     route("/", Mashups),
     route("/presets", Presets),
+    prefix("/movies", movieRoutes),
     prefix("/mashups", mashupRoutes),
     prefix("/user", userRoutes),
     prefix("/api", apiRoutes),

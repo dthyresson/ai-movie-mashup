@@ -10,4 +10,6 @@ export const link = defineLinks([
   "/mashups/new/:firstMovieId/:secondMovieId",
   "/mashups/random-mashup",
   "/presets",
+  "/movies",
+  "/movies/:id",
 ]);
