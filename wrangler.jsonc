@@ -42,7 +42,7 @@
 
   // Environment variables
   "vars": {
-    "APP_NAME": "movie-mashup"
+    "WEBAUTHN_APP_NAME": "movie-mashup"
   },
   // Migrations configuration
   "migrations": [
