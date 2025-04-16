@@ -1,11 +1,17 @@
 {
-  "name": "@redwoodjs/starter-standard",
+  "name": "movie-mashup",
   "version": "1.0.0",
-  "description": "Build fast, server-driven webapps on Cloudflare with SSR, RSC, and realtime. ",
+  "description": "AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka 'mashes up') from two different movies to create unique, AI-generated movie concepts.",
   "main": "index.js",
   "type": "module",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ai",
+    "movie",
+    "mashup",
+    "cloudflare",
+    "redwoodsdk"
+  ],
+  "author": "A. David Thyresson <dthyresson@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
