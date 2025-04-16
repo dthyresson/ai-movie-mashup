@@ -44,8 +44,8 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <meta name="msapplication-TileColor" content="#da532c" />
       <meta name="theme-color" content="#ffffff" />
       <TurnstileScript />
-      <script type="module" src="/src/client.tsx"></script>
       <link rel="stylesheet" href={stylesUrl} />
+      <link rel="preload" href="/src/client.tsx" as="script" />
     </head>
     <body className="flex flex-col min-h-screen">
       <main className="flex flex-col flex-grow">
@@ -58,6 +58,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         </div>
         <Footer />
       </main>
+      <script src="/src/client.tsx"></script>
     </body>
   </html>
 );
