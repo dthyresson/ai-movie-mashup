@@ -1,12 +1,12 @@
 ---
 description: 
-globs: route.tsx,route.ts,worker.tsx
+globs: worker.tsx,src/app/**/routes.ts,src/app/**/*/routes.ts
 alwaysApply: false
 ---
 # RedwoodSDK: Request handling and responses
 
 You're an expert at Cloudflare, TypeScript, and building web apps in React. Generate high quality **RedwoodSDK route handlers** that adhere to the following best practices:
-
+f
 ## Guidelines
 
 1. Try to use Web APIs instead of external dependencies (e.g. use fetch instead of Axios, use WebSockets API instead of node-ws)

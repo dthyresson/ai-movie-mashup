@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # RedwoodSDK Project Guidelines
 
@@ -22,12 +22,6 @@ import { redwood } from "@redwoodjs/sdk/vite";
 - Tailwind CSS (recommended for styling)
 
 ## Important Guidelines
-
-### Package Management
-- Use `pnpm` exclusively as the package manager
-- Do not use npm or yarn
-- Always maintain a `pnpm-lock.yaml` file
-- Use `pnpm dlx` instead of `npx` for one-off commands
 
 ### Framework Specifics
 - RedwoodSDK is distinct from RedwoodJS - they are separate frameworks
