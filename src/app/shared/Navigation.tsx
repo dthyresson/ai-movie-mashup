@@ -6,10 +6,10 @@ export const Navigation = () => (
   <nav className="bg-gradient-to-r from-purple-800 to-purple-900 text-white shadow-lg border-b-2 border-neutral-900 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
     <div className="p-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold hover:text-neutral-200 transition-colors">
+        <h1 className="text-2xl font-bold hover:text-neutral-200">
           <a
             href="/"
-            className="font-banner font-black text-md md:text-xl lg:text-2xl sm:text-sm hover:text-purple-200 transition-colors flex items-center"
+            className="font-banner font-black text-md md:text-xl lg:text-2xl sm:text-sm hover:text-purple-200 flex items-center"
           >
             <img
               src="/favicon.svg"
@@ -26,7 +26,7 @@ export const Navigation = () => (
           <div className="flex items-center gap-2">
             <a
               href={link("/mashups/new")}
-              className="hover:bg-purple-500 font-bold transition-colors bg-purple-600 px-4 py-2 rounded-full flex items-center gap-2 shadow-md"
+              className="hover:bg-purple-500 font-bold bg-purple-600 px-4 py-2 rounded-full flex items-center gap-2 shadow-md"
             >
               <PlusCircle className="w-4 h-4" />
               <span>New</span>
@@ -35,7 +35,7 @@ export const Navigation = () => (
               <input type="checkbox" id="mobile-menu" className="hidden peer" />
               <label
                 htmlFor="mobile-menu"
-                className="p-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer block"
+                className="p-2 rounded-md hover:bg-purple-700 cursor-pointer block"
               >
                 <svg
                   width="24"
@@ -55,21 +55,21 @@ export const Navigation = () => (
               <div className="font-banner absolute right-0 mt-2 w-48 bg-purple-800 rounded-md shadow-lg py-1 hidden peer-checked:block">
                 <a
                   href={link("/mashups")}
-                  className="px-4 py-3 hover:bg-purple-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-purple-700 flex items-center gap-2"
                 >
                   <Clapperboard className="w-5 h-5" />
                   <span>Mashups</span>
                 </a>
                 <a
                   href={link("/movies")}
-                  className="px-4 py-3 hover:bg-purple-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-purple-700 flex items-center gap-2"
                 >
                   <Film className="w-5 h-5" />
                   <span>Movies</span>
                 </a>
                 <a
                   href={link("/presets")}
-                  className="px-4 py-3 hover:bg-purple-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-3 hover:bg-purple-700 flex items-center gap-2"
                 >
                   <Palette className="w-5 h-5" />
                   <span>Presets</span>
@@ -85,7 +85,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/mashups")}
-                className="hover:text-purple-200 font-bold transition-colors px-4 py-2 rounded-md flex items-center gap-2"
+                className="hover:text-purple-200 font-bold px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <Clapperboard className="w-4 h-4 md:w-5 md:h-5" />
                 <span>Mashups</span>
@@ -94,7 +94,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/movies")}
-                className="hover:text-purple-200 font-bold transition-colors px-4 py-2 rounded-md flex items-center gap-2"
+                className="hover:text-purple-200 font-bold px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <Film className="w-4 h-4 md:w-5 md:h-5" />
                 <span>Movies</span>
@@ -103,7 +103,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/presets")}
-                className="hover:text-purple-200 font-bold transition-colors px-4 py-2 rounded-md flex items-center gap-2"
+                className="hover:text-purple-200 font-bold px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <Palette className="w-4 h-4 md:w-5 md:h-5" />
                 <span>Presets</span>
@@ -112,7 +112,7 @@ export const Navigation = () => (
             <li>
               <a
                 href={link("/mashups/new")}
-                className="hover:bg-purple-500 font-bold transition-colors bg-purple-600 px-6 py-2 rounded-full flex items-center gap-2 shadow-md"
+                className="hover:bg-purple-500 font-bold bg-purple-600 px-6 py-2 rounded-full flex items-center gap-2 shadow-md"
               >
                 <PlusCircle className="w-4 h-4 md:w-5 md:h-5" />
                 <span>New Mashup</span>

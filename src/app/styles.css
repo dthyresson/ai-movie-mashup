@@ -1,11 +1,10 @@
 @import "tailwindcss";
 @import "@fontsource-variable/lexend";
 @import "@fontsource/special-elite";
+
 @theme {
-  --font-banner:
-    "Lexend Variable", ui-sans-serif, system-ui, sans-serif,
+  --font-banner: "Lexend Variable", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-screenwriter:
-    "Special Elite", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-screenwriter: "Special Elite", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
