@@ -2,6 +2,19 @@
 @import "@fontsource-variable/lexend";
 @import "@fontsource/special-elite";
 
+/* Font loading optimization */
+@font-face {
+  font-family: "Lexend Variable";
+  font-display: swap;
+  src: local("Lexend Variable");
+}
+
+@font-face {
+  font-family: "Special Elite";
+  font-display: swap;
+  src: local("Special Elite");
+}
+
 @theme {
   --font-banner: "Lexend Variable", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";

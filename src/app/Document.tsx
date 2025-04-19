@@ -1,4 +1,5 @@
 import stylesUrl from "./styles.css?url";
+import { fonts } from "./fonts";
 
 import { TurnstileScript } from "@redwoodjs/sdk/turnstile";
 import { Navigation } from "./shared/Navigation";
@@ -44,6 +45,21 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
       <meta name="msapplication-TileColor" content="#da532c" />
       <meta name="theme-color" content="#ffffff" />
       <TurnstileScript />
+      {/* Preload critical fonts */}
+      <link
+        rel="preload"
+        href={fonts.lexend}
+        as="font"
+        type="font/woff2"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="preload"
+        href={fonts.specialElite}
+        as="font"
+        type="font/woff2"
+        crossOrigin="anonymous"
+      />
       <link rel="stylesheet" href={stylesUrl} />
       <link rel="preload" href="/src/client.tsx" as="script" />
     </head>
