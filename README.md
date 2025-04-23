@@ -12,19 +12,20 @@ AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka "mash
 
 ## Screenshots
 
-![Mashups](./docs/mashups.png)
-![New Mashup](./docs/new.png)
-![Queued](./docs/queued.png)
-![E.T. and Footloose](./docs/et-footloose.png)
-![Forever and Pink](./docs/forever-pink.png)
-
--- old screenshots. new ones coming soon with the agent streaming.
+![Mashups](./docs/mashups-page.png)
+![New Mashup](./docs/new-mashup-page.png)
+![Mashup](./docs/mashup-page.png)
+![Mashup In Progress](./docs/mashup-in-progress.png)
+![Mashup Complete](./docs/mashup-complete.png)
+![Movies](./docs/movies-page.png)
+![Movie](./docs/movie-page.png)
+![Presets](./docs/presets-page.png)
 
 ## Video Demo
 
 I recorded a video demo of the app that shows the main features in action.
 
-[👀 Watch the Demo](https://screen.studio/share/JRN2137W)
+[👀 Watch the Demo](https://screen.studio/share/jvLL9oeI)
 
 -- Old demo. a little out of date. new one coming soon with the agent streaming.
 

@@ -26,15 +26,14 @@ export async function Mashups({ params }: RequestInfo<{ page: string }>) {
     <div className="px-4 py-8">
       {mashups.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-neutral-800 text-lg">No mashups found.</p>
           <div className="flex flex-col items-center gap-6 mt-4">
+            <PresetMashups presets={presets} />
             <a
               href={link("/mashups/new")}
               className="text-white hover:text-purple-700 font-bold transition-colors text-lg bg-purple-400 px-4 py-2 rounded-md"
             >
               Create your first mashup!
             </a>
-            <PresetMashups presets={presets} />
           </div>
         </div>
       ) : (
