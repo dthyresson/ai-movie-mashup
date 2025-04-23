@@ -13,13 +13,28 @@ AI Movie Mashup is a fun RedwoodSDK experiment that combines elements (aka "mash
 ## Screenshots
 
 ![Mashups](./docs/mashups-page.png)
+_Mashups Page: Browse all created mashups with pagination and quick access to favorite presets_
+
 ![New Mashup](./docs/new-mashup-page.png)
+_New Mashup Page: Create a new mashup by selecting two movies to combine with AI_
+
 ![Mashup](./docs/mashup-page.png)
+_Mashup Detail Page: View a completed mashup with title, tagline, plot, and generated poster_
+
 ![Mashup In Progress](./docs/mashup-in-progress.png)
+_Mashup Generation Page: Real-time updates as the AI generates your mashup content_
+
 ![Mashup Complete](./docs/mashup-complete.png)
+_Mashup Complete Page: Completed mashup with all generated elements including audio narration_
+
 ![Movies](./docs/movies-page.png)
+_Movies Page: Browse the movie database with filtering and search options_
+
 ![Movie](./docs/movie-page.png)
+_Movie Detail Page: Detailed view of a single movie with information and mashup history_
+
 ![Presets](./docs/presets-page.png)
+_Presets Page: Curated preset combinations for quick and interesting mashups_
 
 ## Video Demo
 
