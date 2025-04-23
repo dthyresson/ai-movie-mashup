@@ -1,6 +1,6 @@
 ---
 description: 
-globs: *.tsx
+globs: src/app/**/*/*.tsx,Document.tsx
 alwaysApply: false
 ---
 # React, React Server Components, and React Server Functions Rules

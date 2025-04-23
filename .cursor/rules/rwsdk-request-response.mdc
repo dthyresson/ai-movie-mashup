@@ -1,6 +1,6 @@
 ---
 description: 
-globs: worker.tsx,src/app/**/routes.ts,src/app/**/*/routes.ts
+globs: worker.tsx,routes.tsx,routes.ts
 alwaysApply: false
 ---
 # RedwoodSDK: Request handling and responses
