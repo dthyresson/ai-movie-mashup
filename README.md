@@ -42,19 +42,13 @@ I recorded a video demo of the app that shows the main features in action.
 
 [👀 Watch the Demo](https://screen.studio/share/jvLL9oeI)
 
--- Old demo. a little out of date. new one coming soon with the agent streaming.
+## Important
 
-## Important !!!
+This app is deployed on Cloudflare.
 
-This app is not deployed. It's a work in progress.
+The AI Gateway is used to cache and limit the usage of the AI models.
 
-You should run locally with `pnpm dev` and check it out.
-
-I would not deploy until I can ensure rate limiting is in place to prevent abuse and runaway AI charges.
-
-The `api` is open currently and thus accessible to all and open so you will want to use the [AI Gateway ](https://developers.cloudflare.com/ai-gateway/) to both cache and limit the usage.
-
-If you choose to deploy, your do so knowing that you are responsible for the cost of the AI usage.
+You may get rate limited by the AI Gateway FYI.
 
 ## Features
 
