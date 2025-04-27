@@ -56,5 +56,15 @@
     "vite": "6.2.6",
     "wrangler": "4.13.1"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "sharp",
+      "workerd"
+    ]
+  },
   "packageManager": "pnpm@10.9.0"
 }
