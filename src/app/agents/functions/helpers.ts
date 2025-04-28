@@ -5,7 +5,7 @@ import type { Mashup } from "@prisma/client";
 // Helper function to convert base64 to binary blob
 export function base64ToBlob(
   base64Data: string,
-  type: string = "image/jpeg",
+  type: string = "image/jpeg"
 ): Blob {
   const binaryData = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
   return new Blob([binaryData], { type });
@@ -25,7 +25,7 @@ export async function streamAndReturnCompleteText(
   userPrompt: string,
   assistantPrompt: string,
   stateKey: keyof Mashup,
-  maxTokens: number = 512,
+  maxTokens: number = 512
 ): Promise<string> {
   const { textStream, text } = streamText({
     model,
@@ -61,7 +61,7 @@ export async function retryWithExponentialBackoff<T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
   initialDelay: number = 1_300,
-  maxDelay: number = 10_000,
+  maxDelay: number = 10_000
 ): Promise<T> {
   let retries = 0;
   let delay = initialDelay;
