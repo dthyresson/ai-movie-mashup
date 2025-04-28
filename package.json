@@ -37,7 +37,7 @@
     "@fontsource/special-elite": "5.2.5",
     "@prisma/adapter-d1": "6.7.0-dev.40",
     "@prisma/client": "6.7.0-dev.40",
-    "@redwoodjs/sdk": "0.0.75",
+    "@redwoodjs/sdk": "0.0.76",
     "@simplewebauthn/browser": "13.1.0",
     "@simplewebauthn/server": "13.1.1",
     "@tailwindcss/vite": "4.1.4",
@@ -52,6 +52,7 @@
     "@types/node": "22.14.1",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
+    "dotenv": "^16.5.0",
     "prisma": "6.7.0-dev.40",
     "vite": "6.2.6",
     "wrangler": "4.13.1"
