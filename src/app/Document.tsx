@@ -61,7 +61,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         crossOrigin="anonymous"
       />
       <link rel="stylesheet" href={stylesUrl} />
-      <link rel="preload" href="/src/client.tsx" as="script" />
+      <link rel="modulepreload" href="/src/client.tsx" />
     </head>
     <body className="flex flex-col min-h-screen">
       <main className="flex flex-col flex-grow">
@@ -74,7 +74,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         </div>
         <Footer />
       </main>
-      <script src="/src/client.tsx"></script>
+      <script>import("/src/client.tsx")</script>
     </body>
   </html>
 );
